@@ -807,6 +807,7 @@
     let pressTimer;
     let lastPointerX, lastPointerY;
     let currentReaction = null;
+    let pointerDownTarget = null;
 
     // ===== 时间主题 =====
     const themes = {
@@ -872,6 +873,7 @@
       } catch(err) {}
 
       dragState = 'pressing';
+      pointerDownTarget = e.target;
       lastPointerX = e.screenX;
       lastPointerY = e.screenY;
 
@@ -904,26 +906,42 @@
       document.body.style.cursor = '';
 
       if (dragState === 'pressing') {
-        // 短按 = 点击
-        handleShortPress(e);
+        // 短按 = 点击，使用 pointerdown 时的 target 判断
+        handleShortPress(pointerDownTarget, e.target);
       }
 
       dragState = 'idle';
+      pointerDownTarget = null;
+    });
+
+    // 右键显示今日计划
+    document.addEventListener('contextmenu', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      // 如果点击的是交互元素，不处理
+      if (e.target.closest('.menu') || e.target.closest('.bubble') ||
+          e.target.closest('.settings-panel')) {
+        return;
+      }
+      hideBubble();
+      menu.classList.remove('show');
+      settingsPanel.classList.remove('show');
+      showTodayPlans();
     });
 
     // ===== 点击处理 =====
-    function handleShortPress(e) {
-      const target = e.target;
-
+    function handleShortPress(downTarget, upTarget) {
       // 点击交互元素时忽略
-      if (target.closest('.menu') || target.closest('.bubble') ||
-          target.closest('.settings-panel')) {
+      if (upTarget.closest('.menu') || upTarget.closest('.bubble') ||
+          upTarget.closest('.settings-panel')) {
         return;
       }
 
-      const isPet = target.closest('#petBody') || target.closest('.dolphin-body') ||
-                    target.closest('.dolphin-tail') || target.closest('.eye') ||
-                    target.closest('.mouth') || target.closest('.cheek');
+      // 使用 pointerdown 时的 target 判断，更准确
+      const isPet = downTarget.closest('#petBody') || downTarget.closest('.dolphin-body') ||
+                    downTarget.closest('.dolphin-tail') || downTarget.closest('.eye') ||
+                    downTarget.closest('.mouth') || downTarget.closest('.cheek') ||
+                    downTarget.closest('.dolphin-highlight');
 
       if (isPet) {
         triggerPetReaction();
@@ -933,6 +951,23 @@
         settingsPanel.classList.remove('show');
         hideBubble();
       }
+    }
+
+    // ===== 今日计划概览 =====
+    async function showTodayPlans() {
+      const plans = await ipcRenderer.invoke('get-plans');
+      const today = new Date().toISOString().split('T')[0];
+      const todayPlansList = plans
+        .filter(p => !p.completed && (!p.date || p.date === today))
+        .sort((a, b) => (a.time || '').localeCompare(b.time || ''));
+
+      if (todayPlansList.length === 0) {
+        showBubble('今天还没有计划哦~ 去添加一个吧！&#128221;', false);
+        return;
+      }
+
+      const listText = todayPlansList.map(p => `&#9200; ${p.time} ${p.content}`).join('\n');
+      showBubble(`&#128197; 今日计划：\n${listText}`, false);
     }
 
     // ===== 宠物互动 =====
