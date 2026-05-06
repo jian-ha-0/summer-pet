@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>计划提醒</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif;
+      background: linear-gradient(135deg, #4FC3F7 0%, #29B6F6 30%, #81C784 70%, #FFB74D 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      overflow: hidden;
+      -webkit-app-region: drag;
+    }
+    .alarm-icon {
+      font-size: 72px;
+      animation: ring 0.4s ease-in-out infinite alternate;
+      margin-bottom: 16px;
+      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
+    }
+    @keyframes ring {
+      from { transform: rotate(-20deg) scale(1); }
+      to { transform: rotate(20deg) scale(1.15); }
+    }
+    .title {
+      font-size: 26px;
+      font-weight: bold;
+      margin-bottom: 8px;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+    .time {
+      font-size: 52px;
+      font-weight: bold;
+      margin-bottom: 16px;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      font-family: 'Consolas', monospace;
+    }
+    .content {
+      font-size: 18px;
+      background: rgba(255,255,255,0.25);
+      padding: 18px 32px;
+      border-radius: 16px;
+      margin-bottom: 28px;
+      max-width: 85%;
+      text-align: center;
+      backdrop-filter: blur(10px);
+      line-height: 1.6;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    }
+    .close-btn {
+      padding: 14px 56px;
+      font-size: 18px;
+      border: none;
+      border-radius: 30px;
+      background: white;
+      color: #29B6F6;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+      -webkit-app-region: no-drag;
+    }
+    .close-btn:hover {
+      transform: translateY(-2px) scale(1.05);
+      box-shadow: 0 6px 24px rgba(0,0,0,0.3);
+    }
+    .close-btn:active {
+      transform: translateY(0) scale(0.98);
+    }
+    .ring-indicator {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      width: 12px;
+      height: 12px;
+      background: #FF5252;
+      border-radius: 50%;
+      animation: blink 1s ease-in-out infinite;
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+  </style>
+</head>
+<body>
+  <div class="ring-indicator"></div>
+  <div class="alarm-icon">⏰</div>
+  <div class="title">计划时间到啦！</div>
+  <div class="time" id="alarmTime">--:--</div>
+  <div class="content" id="alarmContent">...</div>
+  <button class="close-btn" onclick="closeAlarm()">我知道了</button>
+
+  <script>
+    const { ipcRenderer } = require('electron');
+
+    let audioCtx = null;
+    let beepInterval = null;
+
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+    }
+
+    function playBeep(freq, duration, vol) {
+      if (!audioCtx) return;
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.frequency.value = freq || 880;
+      osc.type = 'sine';
+      gain.gain.setValueAtTime(vol || 0.4, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + (duration || 0.4));
+      osc.start(audioCtx.currentTime);
+      osc.stop(audioCtx.currentTime + (duration || 0.4));
+    }
+
+    function playAlarmSound() {
+      initAudio();
+      // 嘀-嘀-嘀 三声高音
+      playBeep(880, 0.3, 0.4);
+      setTimeout(() => playBeep(880, 0.3, 0.4), 400);
+      setTimeout(() => playBeep(1100, 0.5, 0.5), 800);
+    }
+
+    function startRepeatingAlarm() {
+      playAlarmSound();
+      // 每4秒重复响一次
+      beepInterval = setInterval(playAlarmSound, 4000);
+    }
+
+    ipcRenderer.on('alarm-data', (event, data) => {
+      document.getElementById('alarmTime').textContent = data.time;
+      document.getElementById('alarmContent').textContent = data.content;
+      startRepeatingAlarm();
+    });
+
+    function closeAlarm() {
+      if (beepInterval) {
+        clearInterval(beepInterval);
+        beepInterval = null;
+      }
+      if (audioCtx) {
+        audioCtx.close();
+        audioCtx = null;
+      }
+      ipcRenderer.send('close-alarm');
+    }
+
+    // 点击页面任意位置也可以初始化音频上下文（浏览器策略要求用户交互后才能播放声音）
+    document.body.addEventListener('click', initAudio, { once: true });
+  </script>
+</body>
+</html>

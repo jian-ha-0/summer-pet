@@ -55,6 +55,7 @@ let petWindow;
 let logWindow;
 let planWindow;
 let splashWindow;
+let alarmWindow;
 let tray;
 let reminderTimer;
 let planCheckTimer;
@@ -270,49 +271,110 @@ function sendReminder() {
   petWindow?.webContents.send('pet-reminder', message);
 }
 
+function getLocalDateString(date) {
+  const d = date || new Date();
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+function createAlarmWindow(plan) {
+  if (alarmWindow) {
+    alarmWindow.focus();
+    return;
+  }
+
+  alarmWindow = new BrowserWindow({
+    width: 440,
+    height: 400,
+    frame: false,
+    alwaysOnTop: true,
+    skipTaskbar: false,
+    resizable: false,
+    center: true,
+    show: false,
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false
+    }
+  });
+
+  alarmWindow.loadFile(path.join(__dirname, 'alarm.html'));
+
+  alarmWindow.once('ready-to-show', () => {
+    alarmWindow.show();
+    alarmWindow.flashFrame(true);
+    alarmWindow.webContents.send('alarm-data', {
+      time: plan.time,
+      content: plan.content
+    });
+  });
+
+  alarmWindow.on('closed', () => {
+    alarmWindow = null;
+  });
+}
+
 function checkPlanReminders() {
   const now = new Date();
   const currentHour = now.getHours();
   const currentMinute = now.getMinutes();
-  const timeKey = `${currentHour}:${String(currentMinute).padStart(2, '0')}`;
+  const currentSecond = now.getSeconds();
+
+  // 只在每分钟的 0~55 秒范围内触发，避免在分钟切换边界处重复触发
+  const today = getLocalDateString(now);
 
   const plans = loadPlans();
-  const today = now.toISOString().split('T')[0];
 
-  const duePlans = plans.filter(p => {
-    if (p.completed) return false;
-    if (!p.time) return false;
-    const [h, m] = p.time.split(':').map(Number);
-    const planTime = `${h}:${String(m).padStart(2, '0')}`;
-    if (planTime !== timeKey) return false;
-    if (p.date && p.date !== today) return false;
-    return true;
-  });
+  plans.forEach(plan => {
+    if (plan.completed) return;
+    if (!plan.time) return;
 
-  duePlans.forEach(plan => {
-    const notifyKey = `${plan.id}-${timeKey}`;
+    const [h, m] = plan.time.split(':').map(Number);
+
+    // 时间匹配：当前时分等于计划时分
+    if (h !== currentHour || m !== currentMinute) return;
+
+    // 日期匹配：如果是特定日期计划，检查是否今天
+    if (plan.date && plan.date !== today) return;
+
+    // 检查今天是否已经提醒过（用 plan.id + 日期作为唯一键）
+    const notifyKey = `${plan.id}-${today}`;
     if (lastNotifiedPlans.has(notifyKey)) return;
+
+    // 记录已提醒
     lastNotifiedPlans.add(notifyKey);
 
     const message = plan.date
       ? `⏰ 计划提醒：${plan.time} ${plan.content}`
       : `⏰ 每日提醒：${plan.time} ${plan.content}`;
 
+    // 1. 系统通知栏提示（辅助）
     if (Notification.isSupported()) {
       new Notification({
-        title: '计划提醒',
+        title: '⏰ 计划时间到啦！',
         body: plan.content,
-        icon: path.join(__dirname, 'assets', 'tray.png')
+        silent: false
       }).show();
     }
 
+    // 2. 宠物气泡消息
     petWindow?.webContents.send('plan-reminder', message);
+
+    // 3. 闹钟弹窗（主要提醒方式，有声音、需手动关闭）
+    createAlarmWindow(plan);
   });
 
-  // 清理过期的通知记录（保留最近60条）
-  if (lastNotifiedPlans.size > 60) {
+  // 每天凌晨清理过期的通知记录
+  if (currentHour === 0 && currentMinute === 0 && currentSecond < 10) {
+    lastNotifiedPlans.clear();
+  }
+
+  // 限制内存占用（保留最近100条）
+  if (lastNotifiedPlans.size > 100) {
     const arr = Array.from(lastNotifiedPlans);
-    lastNotifiedPlans = new Set(arr.slice(-40));
+    lastNotifiedPlans = new Set(arr.slice(-60));
   }
 }
 
@@ -329,7 +391,7 @@ function updateReminder() {
 
 function startPlanChecker() {
   if (planCheckTimer) clearInterval(planCheckTimer);
-  planCheckTimer = setInterval(checkPlanReminders, 30000); // 每30秒检查一次
+  planCheckTimer = setInterval(checkPlanReminders, 5000); // 每5秒检查一次
 }
 
 ipcMain.handle('get-logs', () => loadLogs());
@@ -408,6 +470,13 @@ ipcMain.handle('pet-action', (event, action) => {
 
 ipcMain.handle('quit', () => {
   app.quit();
+});
+
+ipcMain.on('close-alarm', () => {
+  if (alarmWindow) {
+    alarmWindow.close();
+    alarmWindow = null;
+  }
 });
 
 ipcMain.handle('hide-pet', () => {

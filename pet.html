@@ -954,9 +954,14 @@
     }
 
     // ===== 今日计划概览 =====
+    function getLocalDate(d) {
+      d = d || new Date();
+      return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    }
+
     async function showTodayPlans() {
       const plans = await ipcRenderer.invoke('get-plans');
-      const today = new Date().toISOString().split('T')[0];
+      const today = getLocalDate();
       const todayPlansList = plans
         .filter(p => !p.completed && (!p.date || p.date === today))
         .sort((a, b) => (a.time || '').localeCompare(b.time || ''));

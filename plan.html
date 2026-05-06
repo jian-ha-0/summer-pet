@@ -437,8 +437,14 @@
     let selectedDateMode = 'daily';
     let currentPlans = [];
 
+    // 获取本地日期字符串 YYYY-MM-DD
+    function getLocalDate(d) {
+      d = d || new Date();
+      return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    }
+
     // 初始化日期输入为今天
-    document.getElementById('planDate').value = new Date().toISOString().split('T')[0];
+    document.getElementById('planDate').value = getLocalDate();
 
     function selectDateTag(el, mode) {
       document.querySelectorAll('.date-tag').forEach(t => t.classList.remove('active'));
@@ -448,11 +454,11 @@
       const dateInput = document.getElementById('planDate');
       const today = new Date();
       if (mode === 'today') {
-        dateInput.value = today.toISOString().split('T')[0];
+        dateInput.value = getLocalDate(today);
       } else if (mode === 'tomorrow') {
         const tmr = new Date(today);
         tmr.setDate(tmr.getDate() + 1);
-        dateInput.value = tmr.toISOString().split('T')[0];
+        dateInput.value = getLocalDate(tmr);
       } else if (mode === 'daily') {
         dateInput.value = '';
       }
@@ -518,7 +524,7 @@
     }
 
     function renderTodayOverview(plans) {
-      const today = new Date().toISOString().split('T')[0];
+      const today = getLocalDate();
       const todayPlans = plans.filter(p => !p.date || p.date === today);
 
       const overview = document.getElementById('todayOverview');
@@ -560,7 +566,7 @@
       }
 
       // 分组
-      const today = new Date().toISOString().split('T')[0];
+      const today = getLocalDate();
       const groups = {
         today: { title: '📅 今天', plans: [] },
         tomorrow: { title: '📅 明天', plans: [] },
@@ -578,7 +584,7 @@
           const pDate = new Date(p.date);
           const tmr = new Date();
           tmr.setDate(tmr.getDate() + 1);
-          const tmrStr = tmr.toISOString().split('T')[0];
+          const tmrStr = getLocalDate(tmr);
 
           if (p.date === tmrStr) {
             groups.tomorrow.plans.push(p);
