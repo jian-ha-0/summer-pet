@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>工作计划 - 夏日宠物</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif;
+      background: linear-gradient(160deg, #E8F4FD 0%, #FFF8E7 30%, #FFF0E1 60%, #E8F5E9 100%);
+      min-height: 100vh;
+      color: #333;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #4FC3F7 0%, #81C784 50%, #FFB74D 100%);
+      padding: 24px 28px;
+      color: white;
+      box-shadow: 0 4px 20px rgba(79,195,247,0.3);
+      position: relative;
+      overflow: hidden;
+    }
+    .header::before {
+      content: '';
+      position: absolute;
+      top: -20px; right: -20px;
+      width: 100px; height: 100px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 50%;
+    }
+    .header h1 { font-size: 22px; font-weight: 600; position: relative; z-index: 1; }
+    .header p { font-size: 13px; opacity: 0.9; margin-top: 6px; position: relative; z-index: 1; }
+
+    .container {
+      padding: 24px;
+      max-width: 820px;
+      margin: 0 auto;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .tab {
+      padding: 10px 24px;
+      border-radius: 24px;
+      border: none;
+      background: rgba(255,255,255,0.8);
+      backdrop-filter: blur(10px);
+      color: #666;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+      font-weight: 500;
+    }
+    .tab.active {
+      background: linear-gradient(135deg, #4FC3F7 0%, #29B6F6 100%);
+      color: white;
+      box-shadow: 0 4px 16px rgba(41,182,246,0.35);
+      transform: translateY(-1px);
+    }
+    .tab:hover:not(.active) {
+      background: white;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    }
+
+    /* 添加计划 */
+    .add-section {
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+      border: 1px solid rgba(255,255,255,0.8);
+      margin-bottom: 20px;
+    }
+    .form-row {
+      margin-bottom: 16px;
+    }
+    .form-row label {
+      display: block;
+      font-size: 13px;
+      color: #555;
+      margin-bottom: 6px;
+      font-weight: 500;
+    }
+    .plan-input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid #E8E8E8;
+      border-radius: 12px;
+      font-size: 14px;
+      transition: all 0.3s;
+      font-family: inherit;
+      background: #FAFBFC;
+    }
+    .plan-input:focus {
+      outline: none;
+      border-color: #4FC3F7;
+      background: white;
+      box-shadow: 0 0 0 4px rgba(79,195,247,0.1);
+    }
+    .form-row-inline {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .form-row-inline .form-row {
+      flex: 1;
+      min-width: 150px;
+    }
+    .time-input, .date-input {
+      padding: 10px 14px;
+      border: 2px solid #E8E8E8;
+      border-radius: 12px;
+      font-size: 14px;
+      transition: all 0.3s;
+      background: #FAFBFC;
+      font-family: inherit;
+    }
+    .time-input:focus, .date-input:focus {
+      outline: none;
+      border-color: #4FC3F7;
+      background: white;
+      box-shadow: 0 0 0 4px rgba(79,195,247,0.1);
+    }
+    .date-tags {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 6px;
+    }
+    .date-tag {
+      padding: 6px 14px;
+      border-radius: 16px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: 1.5px solid #E0E0E0;
+      background: white;
+      color: #666;
+    }
+    .date-tag:hover { border-color: #4FC3F7; color: #0288D1; }
+    .date-tag.active {
+      background: linear-gradient(135deg, #4FC3F7, #29B6F6);
+      color: white;
+      border-color: #4FC3F7;
+      box-shadow: 0 2px 8px rgba(41,182,246,0.3);
+    }
+    .save-btn {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #4FC3F7 0%, #81C784 50%, #FFB74D 100%);
+      background-size: 200% 200%;
+      color: white;
+      border: none;
+      border-radius: 14px;
+      font-size: 15px;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-weight: 600;
+      box-shadow: 0 4px 16px rgba(79,195,247,0.3);
+      letter-spacing: 1px;
+    }
+    .save-btn:hover {
+      background-position: 100% 0;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(79,195,247,0.4);
+    }
+
+    /* 今日概览 */
+    .today-overview {
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+      border: 1px solid rgba(255,255,255,0.8);
+    }
+    .today-overview h3 {
+      font-size: 15px;
+      color: #333;
+      margin-bottom: 12px;
+      font-weight: 600;
+    }
+    .overview-progress {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .progress-bar {
+      flex: 1;
+      height: 8px;
+      background: #F0F0F0;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #4FC3F7, #81C784);
+      border-radius: 4px;
+      transition: width 0.6s ease-out;
+    }
+    .progress-text {
+      font-size: 13px;
+      color: #666;
+      font-weight: 500;
+      min-width: 60px;
+      text-align: right;
+    }
+    .overview-items {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .overview-item {
+      padding: 6px 12px;
+      background: linear-gradient(135deg, #E3F2FD 0%, #F3E5F5 100%);
+      border-radius: 12px;
+      font-size: 12px;
+      color: #555;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .overview-item.done { opacity: 0.5; text-decoration: line-through; background: #F5F5F5; }
+
+    /* 计划列表 */
+    .plans-section { display: none; }
+    .plans-section.active { display: block; }
+
+    .plan-group {
+      margin-bottom: 20px;
+    }
+    .plan-group-title {
+      font-size: 13px;
+      color: #888;
+      margin-bottom: 10px;
+      padding-left: 8px;
+      border-left: 3px solid #4FC3F7;
+      font-weight: 500;
+    }
+
+    .plan-card {
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      padding: 16px 20px;
+      margin-bottom: 12px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      transition: all 0.3s;
+      border: 1px solid rgba(255,255,255,0.8);
+    }
+    .plan-card:hover {
+      transform: translateX(4px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+    }
+    .plan-card.completed {
+      opacity: 0.6;
+    }
+    .plan-card.completed .plan-content {
+      text-decoration: line-through;
+      color: #999;
+    }
+    .plan-checkbox {
+      width: 22px;
+      height: 22px;
+      border: 2px solid #4FC3F7;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: all 0.2s;
+    }
+    .plan-checkbox:hover { background: rgba(79,195,247,0.1); }
+    .plan-checkbox.checked {
+      background: linear-gradient(135deg, #4FC3F7, #81C784);
+      border-color: #81C784;
+    }
+    .plan-checkbox.checked::after {
+      content: '✓';
+      color: white;
+      font-size: 12px;
+      font-weight: bold;
+    }
+    .plan-info { flex: 1; }
+    .plan-content {
+      font-size: 14px;
+      color: #333;
+      line-height: 1.6;
+    }
+    .plan-meta {
+      display: flex;
+      gap: 10px;
+      margin-top: 6px;
+      flex-wrap: wrap;
+    }
+    .plan-time {
+      font-size: 12px;
+      color: #4FC3F7;
+      font-weight: 600;
+      background: rgba(79,195,247,0.1);
+      padding: 2px 8px;
+      border-radius: 8px;
+    }
+    .plan-date {
+      font-size: 12px;
+      color: #888;
+    }
+    .plan-daily {
+      font-size: 11px;
+      color: #81C784;
+      background: rgba(129,199,132,0.1);
+      padding: 2px 8px;
+      border-radius: 8px;
+    }
+    .plan-delete {
+      font-size: 18px;
+      color: #DDD;
+      cursor: pointer;
+      padding: 4px;
+      transition: color 0.2s;
+      flex-shrink: 0;
+    }
+    .plan-delete:hover { color: #FF5252; }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #CCC;
+    }
+    .empty-state .emoji {
+      font-size: 48px;
+      margin-bottom: 16px;
+      filter: grayscale(0.3);
+      animation: emptyFloat 3s ease-in-out infinite;
+    }
+    @keyframes emptyFloat {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: linear-gradient(135deg, #333 0%, #444 100%);
+      color: white;
+      padding: 12px 28px;
+      border-radius: 28px;
+      font-size: 14px;
+      opacity: 0;
+      transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      z-index: 1000;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    }
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>✅ 工作计划</h1>
+    <p>安排每一天，小蓝按时提醒你</p>
+  </div>
+
+  <div class="container">
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('add')">➕ 添加计划</button>
+      <button class="tab" onclick="switchTab('list')">📋 全部计划</button>
+    </div>
+
+    <!-- 添加计划 -->
+    <div class="add-section" id="addSection">
+      <div class="form-row">
+        <label>计划内容</label>
+        <input type="text" class="plan-input" id="planContent" placeholder="比如：完成项目报告、下午开会...">
+      </div>
+
+      <div class="form-row-inline">
+        <div class="form-row">
+          <label>提醒时间</label>
+          <input type="time" class="time-input" id="planTime" value="09:00">
+        </div>
+        <div class="form-row">
+          <label>日期</label>
+          <input type="date" class="date-input" id="planDate">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <label>快捷选择</label>
+        <div class="date-tags">
+          <span class="date-tag" onclick="selectDateTag(this, 'today')">今天</span>
+          <span class="date-tag" onclick="selectDateTag(this, 'tomorrow')">明天</span>
+          <span class="date-tag active" onclick="selectDateTag(this, 'daily')">每天</span>
+        </div>
+      </div>
+
+      <button class="save-btn" onclick="savePlan()">💾 添加计划</button>
+    </div>
+
+    <!-- 今日概览 + 计划列表 -->
+    <div class="plans-section" id="plansSection">
+      <div class="today-overview" id="todayOverview" style="display:none">
+        <h3>📅 今日概览</h3>
+        <div class="overview-progress">
+          <div class="progress-bar">
+            <div class="progress-fill" id="progressFill" style="width:0%"></div>
+          </div>
+          <span class="progress-text" id="progressText">0/0</span>
+        </div>
+        <div class="overview-items" id="overviewItems"></div>
+      </div>
+      <div id="plansList"></div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const { ipcRenderer } = require('electron');
+
+    let selectedDateMode = 'daily';
+    let currentPlans = [];
+
+    // 初始化日期输入为今天
+    document.getElementById('planDate').value = new Date().toISOString().split('T')[0];
+
+    function selectDateTag(el, mode) {
+      document.querySelectorAll('.date-tag').forEach(t => t.classList.remove('active'));
+      el.classList.add('active');
+      selectedDateMode = mode;
+
+      const dateInput = document.getElementById('planDate');
+      const today = new Date();
+      if (mode === 'today') {
+        dateInput.value = today.toISOString().split('T')[0];
+      } else if (mode === 'tomorrow') {
+        const tmr = new Date(today);
+        tmr.setDate(tmr.getDate() + 1);
+        dateInput.value = tmr.toISOString().split('T')[0];
+      } else if (mode === 'daily') {
+        dateInput.value = '';
+      }
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.innerHTML = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2500);
+    }
+
+    async function savePlan() {
+      const content = document.getElementById('planContent').value.trim();
+      const time = document.getElementById('planTime').value;
+      const date = document.getElementById('planDate').value;
+
+      if (!content) {
+        showToast('请填写计划内容~');
+        return;
+      }
+      if (!time) {
+        showToast('请选择提醒时间~');
+        return;
+      }
+
+      await ipcRenderer.invoke('save-plan', {
+        content,
+        time,
+        date: selectedDateMode === 'daily' ? null : date
+      });
+
+      showToast('计划已添加！');
+      document.getElementById('planContent').value = '';
+      document.getElementById('planTime').value = '09:00';
+    }
+
+    async function togglePlan(id) {
+      const completed = await ipcRenderer.invoke('toggle-plan', id);
+      loadPlans();
+      showToast(completed ? '已完成 ✅' : '已取消完成');
+    }
+
+    async function deletePlan(id) {
+      if (!confirm('确定删除这个计划吗？')) return;
+      await ipcRenderer.invoke('delete-plan', id);
+      loadPlans();
+      showToast('已删除');
+    }
+
+    function switchTab(tab) {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      event.target.classList.add('active');
+
+      if (tab === 'add') {
+        document.getElementById('addSection').style.display = 'block';
+        document.getElementById('plansSection').classList.remove('active');
+      } else {
+        document.getElementById('addSection').style.display = 'none';
+        document.getElementById('plansSection').classList.add('active');
+        loadPlans();
+      }
+    }
+
+    function renderTodayOverview(plans) {
+      const today = new Date().toISOString().split('T')[0];
+      const todayPlans = plans.filter(p => !p.date || p.date === today);
+
+      const overview = document.getElementById('todayOverview');
+      if (todayPlans.length === 0) {
+        overview.style.display = 'none';
+        return;
+      }
+      overview.style.display = 'block';
+
+      const completed = todayPlans.filter(p => p.completed).length;
+      const total = todayPlans.length;
+      const pct = total > 0 ? Math.round((completed / total) * 100) : 0;
+
+      document.getElementById('progressFill').style.width = pct + '%';
+      document.getElementById('progressText').textContent = `${completed}/${total}`;
+
+      document.getElementById('overviewItems').innerHTML = todayPlans.map(p => `
+        <span class="overview-item ${p.completed ? 'done' : ''}">
+          ${p.completed ? '✅' : '⏰'} ${p.time} ${p.content.substring(0, 10)}${p.content.length > 10 ? '...' : ''}
+        </span>
+      `).join('');
+    }
+
+    async function loadPlans() {
+      const plans = await ipcRenderer.invoke('get-plans');
+      currentPlans = plans;
+      const list = document.getElementById('plansList');
+
+      renderTodayOverview(plans);
+
+      if (plans.length === 0) {
+        list.innerHTML = `
+          <div class="empty-state">
+            <div class="emoji">📝</div>
+            <p>还没有计划哦，去添加一个吧！</p>
+          </div>
+        `;
+        return;
+      }
+
+      // 分组
+      const today = new Date().toISOString().split('T')[0];
+      const groups = {
+        today: { title: '📅 今天', plans: [] },
+        tomorrow: { title: '📅 明天', plans: [] },
+        daily: { title: '🔁 每天', plans: [] },
+        future: { title: '📅 未来', plans: [] },
+        past: { title: '📅 过去', plans: [] }
+      };
+
+      plans.forEach(p => {
+        if (!p.date) {
+          groups.daily.plans.push(p);
+        } else if (p.date === today) {
+          groups.today.plans.push(p);
+        } else {
+          const pDate = new Date(p.date);
+          const tmr = new Date();
+          tmr.setDate(tmr.getDate() + 1);
+          const tmrStr = tmr.toISOString().split('T')[0];
+
+          if (p.date === tmrStr) {
+            groups.tomorrow.plans.push(p);
+          } else if (pDate > new Date(today)) {
+            groups.future.plans.push(p);
+          } else {
+            groups.past.plans.push(p);
+          }
+        }
+      });
+
+      let html = '';
+      for (const [key, group] of Object.entries(groups)) {
+        if (group.plans.length === 0) continue;
+        const sorted = group.plans.sort((a, b) => (a.time || '').localeCompare(b.time || ''));
+
+        html += `<div class="plan-group">
+          <div class="plan-group-title">${group.title} (${sorted.length})</div>`;
+
+        html += sorted.map(p => `
+          <div class="plan-card ${p.completed ? 'completed' : ''}">
+            <div class="plan-checkbox ${p.completed ? 'checked' : ''}" onclick="togglePlan(${p.id})"></div>
+            <div class="plan-info">
+              <div class="plan-content">${escapeHtml(p.content)}</div>
+              <div class="plan-meta">
+                <span class="plan-time">⏰ ${p.time || '--:--'}</span>
+                ${p.date ? `<span class="plan-date">${p.date}</span>` : '<span class="plan-daily">每天</span>'}
+              </div>
+            </div>
+            <div class="plan-delete" onclick="deletePlan(${p.id})">🗑️</div>
+          </div>
+        `).join('');
+
+        html += '</div>';
+      }
+
+      list.innerHTML = html;
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+  </script>
+</body>
+</html>

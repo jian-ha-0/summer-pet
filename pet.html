@@ -17,7 +17,71 @@
       height: 300px;
       position: relative;
       cursor: move;
+      -webkit-app-region: no-drag;
     }
+
+    /* ===== 拖拽条 ===== */
+    .drag-bar {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 18px;
+      -webkit-app-region: drag;
+      z-index: 200;
+      cursor: move;
+    }
+
+    /* ===== 背景层 ===== */
+    .bg-layer {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      border-radius: 20px;
+      transition: background 2s ease;
+      z-index: 0;
+    }
+    .theme-dawn .bg-layer {
+      background: linear-gradient(180deg, #FFE0B2 0%, #FFCC80 30%, #E3F2FD 70%, rgba(255,255,255,0) 100%);
+    }
+    .theme-morning .bg-layer {
+      background: linear-gradient(180deg, #81D4FA 0%, #B3E5FC 30%, #E1F5FE 70%, rgba(255,255,255,0) 100%);
+    }
+    .theme-noon .bg-layer {
+      background: linear-gradient(180deg, #4FC3F7 0%, #81D4FA 30%, #E1F5FE 70%, rgba(255,255,255,0) 100%);
+    }
+    .theme-afternoon .bg-layer {
+      background: linear-gradient(180deg, #FFB74D 0%, #FFCC80 30%, #FFF3E0 70%, rgba(255,255,255,0) 100%);
+    }
+    .theme-evening .bg-layer {
+      background: linear-gradient(180deg, #FF8A65 0%, #FFB74D 30%, #FFE0B2 70%, rgba(255,255,255,0) 100%);
+    }
+    .theme-night .bg-layer {
+      background: linear-gradient(180deg, #1a237e 0%, #283593 30%, #3949ab 60%, rgba(255,255,255,0) 100%);
+    }
+    .theme-latenight .bg-layer {
+      background: linear-gradient(180deg, #0d1642 0%, #1a237e 30%, #283593 60%, rgba(255,255,255,0) 100%);
+    }
+
+    /* ===== 时间标签 ===== */
+    .time-label {
+      position: absolute;
+      top: 22px;
+      left: 12px;
+      font-size: 10px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 10px;
+      z-index: 2;
+      transition: all 2s ease;
+      letter-spacing: 1px;
+      pointer-events: none;
+    }
+    .theme-dawn .time-label { color: #E65100; background: rgba(255,224,178,0.7); }
+    .theme-morning .time-label { color: #01579B; background: rgba(179,229,252,0.7); }
+    .theme-noon .time-label { color: #0277BD; background: rgba(225,245,254,0.7); }
+    .theme-afternoon .time-label { color: #E65100; background: rgba(255,243,224,0.7); }
+    .theme-evening .time-label { color: #BF360C; background: rgba(255,224,178,0.7); }
+    .theme-night .time-label { color: #E8EAF6; background: rgba(57,73,171,0.5); }
+    .theme-latenight .time-label { color: #C5CAE9; background: rgba(26,35,126,0.5); }
 
     /* ===== 光斑粒子 ===== */
     .particles {
@@ -33,35 +97,43 @@
       opacity: 0;
       pointer-events: none;
     }
-    .particle.p1 { width: 4px; height: 4px; background: #FFD54F; top: 20%; left: 15%; animation: particleFloat 4s ease-in-out infinite; }
-    .particle.p2 { width: 6px; height: 6px; background: #81D4FA; top: 60%; left: 80%; animation: particleFloat 5s ease-in-out infinite 1s; }
-    .particle.p3 { width: 3px; height: 3px; background: #FFF; top: 40%; left: 75%; animation: particleFloat 3.5s ease-in-out infinite 0.5s; }
-    .particle.p4 { width: 5px; height: 5px; background: #FFD54F; top: 70%; left: 20%; animation: particleFloat 4.5s ease-in-out infinite 2s; }
-    .particle.p5 { width: 3px; height: 3px; background: #B3E5FC; top: 10%; left: 60%; animation: particleFloat 3s ease-in-out infinite 1.5s; }
-    .particle.p6 { width: 4px; height: 4px; background: #FFE082; top: 85%; left: 50%; animation: particleFloat 5.5s ease-in-out infinite 0.8s; }
+    .particle.p1 { width: 4px; height: 4px; top: 20%; left: 15%; animation: particleFloat 4s ease-in-out infinite; }
+    .particle.p2 { width: 6px; height: 6px; top: 60%; left: 80%; animation: particleFloat 5s ease-in-out infinite 1s; }
+    .particle.p3 { width: 3px; height: 3px; top: 40%; left: 75%; animation: particleFloat 3.5s ease-in-out infinite 0.5s; }
+    .particle.p4 { width: 5px; height: 5px; top: 70%; left: 20%; animation: particleFloat 4.5s ease-in-out infinite 2s; }
+    .particle.p5 { width: 3px; height: 3px; top: 10%; left: 60%; animation: particleFloat 3s ease-in-out infinite 1.5s; }
+    .particle.p6 { width: 4px; height: 4px; top: 85%; left: 50%; animation: particleFloat 5.5s ease-in-out infinite 0.8s; }
+    .theme-dawn .particle { background: #FFD54F; }
+    .theme-morning .particle, .theme-noon .particle { background: #81D4FA; }
+    .theme-afternoon .particle, .theme-evening .particle { background: #FFD54F; }
+    .theme-night .particle, .theme-latenight .particle { background: #C5CAE9; }
 
     @keyframes particleFloat {
       0% { transform: translateY(0) scale(0); opacity: 0; }
-      20% { transform: translateY(-10px) scale(1); opacity: 0.8; }
-      80% { transform: translateY(-40px) scale(0.6); opacity: 0.4; }
+      20% { transform: translateY(-10px) scale(1); opacity: 0.7; }
+      80% { transform: translateY(-40px) scale(0.6); opacity: 0.3; }
       100% { transform: translateY(-60px) scale(0); opacity: 0; }
     }
 
-    /* ===== 太阳 ===== */
-    .sun {
+    /* ===== 天体 ===== */
+    .celestial {
       position: absolute;
       top: 8px;
       right: 15px;
       width: 44px;
       height: 44px;
-      background: radial-gradient(circle, #FFEB3B 0%, #FFD54F 50%, #FF9800 100%);
       border-radius: 50%;
+      z-index: 2;
+      transition: all 2s ease;
+    }
+    /* 太阳 */
+    .sun {
+      background: radial-gradient(circle, #FFEB3B 0%, #FFD54F 50%, #FF9800 100%);
       box-shadow:
         0 0 20px rgba(255, 213, 79, 0.6),
         0 0 40px rgba(255, 213, 79, 0.3),
         0 0 60px rgba(255, 213, 79, 0.1);
       animation: sunPulse 3s ease-in-out infinite;
-      z-index: 2;
     }
     .sun::before {
       content: '';
@@ -95,6 +167,42 @@
     .sun-ray:nth-child(3) { animation-delay: -4s; height: 1px; width: 60px; }
     .sun-ray:nth-child(4) { animation-delay: -6s; height: 1.5px; width: 72px; }
 
+    /* 月亮 */
+    .moon {
+      background: radial-gradient(circle at 30% 30%, #E8EAF6 0%, #C5CAE9 50%, #9FA8DA 100%);
+      box-shadow:
+        0 0 20px rgba(197, 202, 233, 0.4),
+        0 0 40px rgba(197, 202, 233, 0.2);
+      animation: moonPulse 4s ease-in-out infinite;
+    }
+    .moon::before {
+      content: '';
+      position: absolute;
+      top: 8px; left: 10px;
+      width: 10px; height: 10px;
+      background: rgba(159,168,218,0.3);
+      border-radius: 50%;
+    }
+    .moon::after {
+      content: '';
+      position: absolute;
+      top: 22px; left: 6px;
+      width: 6px; height: 6px;
+      background: rgba(159,168,218,0.2);
+      border-radius: 50%;
+    }
+    .star {
+      position: absolute;
+      background: white;
+      border-radius: 50%;
+      animation: starTwinkle 2s ease-in-out infinite;
+    }
+    .star.s1 { width: 2px; height: 2px; top: -8px; left: -10px; animation-delay: 0s; }
+    .star.s2 { width: 2px; height: 2px; top: 50px; left: 48px; animation-delay: 0.5s; }
+    .star.s3 { width: 1.5px; height: 1.5px; top: 20px; left: -18px; animation-delay: 1s; }
+    .star.s4 { width: 1.5px; height: 1.5px; top: 55px; left: -5px; animation-delay: 1.5s; }
+    .star.s5 { width: 1px; height: 1px; top: -5px; left: 35px; animation-delay: 0.8s; }
+
     @keyframes sunPulse {
       0%, 100% { transform: scale(1); }
       50% { transform: scale(1.08); }
@@ -107,6 +215,14 @@
       0% { transform: translate(-50%, -50%) rotate(0deg); }
       100% { transform: translate(-50%, -50%) rotate(360deg); }
     }
+    @keyframes moonPulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.05); opacity: 0.9; }
+    }
+    @keyframes starTwinkle {
+      0%, 100% { opacity: 0.3; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.3); }
+    }
 
     /* ===== 海豚 ===== */
     .pet-body {
@@ -117,6 +233,7 @@
       width: 160px;
       height: 150px;
       z-index: 5;
+      cursor: pointer;
     }
     .dolphin-tail {
       position: absolute;
@@ -279,6 +396,10 @@
       opacity: 0.3;
       bottom: 10px;
       animation-duration: 6s;
+    }
+    .theme-night .wave,
+    .theme-latenight .wave {
+      filter: brightness(0.5);
     }
     @keyframes waveMove {
       0% { transform: translateX(0); }
@@ -519,6 +640,55 @@
       box-shadow: 0 4px 12px rgba(41,182,246,0.4);
     }
 
+    /* ===== 今日计划概览 ===== */
+    .today-plans {
+      position: absolute;
+      top: 48px;
+      left: 12px;
+      right: 12px;
+      background: rgba(255,255,255,0.85);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: 12px;
+      padding: 8px 10px;
+      font-size: 10px;
+      color: #555;
+      z-index: 100;
+      opacity: 0;
+      transform: scale(0.9);
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      max-height: 100px;
+      overflow-y: auto;
+      border: 1px solid rgba(255,255,255,0.6);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+      -webkit-app-region: no-drag;
+      pointer-events: auto;
+    }
+    .today-plans.show {
+      opacity: 1;
+      transform: scale(1);
+    }
+    .today-plans .plan-item {
+      padding: 3px 0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      border-bottom: 1px dashed rgba(0,0,0,0.06);
+    }
+    .today-plans .plan-item:last-child { border-bottom: none; }
+    .today-plans .plan-time {
+      font-weight: 600;
+      color: #4FC3F7;
+      min-width: 30px;
+    }
+    .today-plans .plan-text {
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .today-plans .plan-done { text-decoration: line-through; opacity: 0.5; }
+
     /* ===== 动画 ===== */
     @keyframes reminderShake {
       0%, 100% { transform: translateX(-50%) rotate(0); }
@@ -540,6 +710,15 @@
 </head>
 <body>
   <div class="pet-container" id="petContainer">
+    <!-- 拖拽条 -->
+    <div class="drag-bar"></div>
+
+    <!-- 背景层 -->
+    <div class="bg-layer"></div>
+
+    <!-- 时间标签 -->
+    <div class="time-label" id="timeLabel"></div>
+
     <!-- 光斑粒子 -->
     <div class="particles">
       <div class="particle p1"></div>
@@ -550,8 +729,8 @@
       <div class="particle p6"></div>
     </div>
 
-    <!-- 太阳 -->
-    <div class="sun">
+    <!-- 天体 -->
+    <div class="celestial sun" id="celestial">
       <div class="sun-ray"></div>
       <div class="sun-ray"></div>
       <div class="sun-ray"></div>
@@ -569,8 +748,12 @@
       <button class="bubble-action" id="bubbleAction" style="display:none" onclick="openLogWindow()">去记录</button>
     </div>
 
+    <!-- 今日计划 -->
+    <div class="today-plans" id="todayPlans"></div>
+
     <!-- 菜单 -->
     <div class="menu" id="menu">
+      <div class="menu-item" onclick="openPlanWindow()">&#9989; 工作计划</div>
       <div class="menu-item" onclick="openLogWindow()">&#128221; 写日志</div>
       <div class="menu-item" onclick="showLogs()">&#128203; 查看日志</div>
       <div class="menu-divider"></div>
@@ -627,21 +810,72 @@
     const bubbleAction = document.getElementById('bubbleAction');
     const menu = document.getElementById('menu');
     const settingsPanel = document.getElementById('settingsPanel');
+    const todayPlans = document.getElementById('todayPlans');
     const intervalRange = document.getElementById('intervalRange');
     const intervalValue = document.getElementById('intervalValue');
     const reminderEnabled = document.getElementById('reminderEnabled');
+    const timeLabel = document.getElementById('timeLabel');
+    const celestial = document.getElementById('celestial');
 
     let bubbleTimer;
-    let idleMessages = [
-      '今天天气真好~ &#127774;',
-      '记得多喝水哦 &#128167;',
-      '休息一下，看看远方吧 &#128064;',
-      '你今天的心情怎么样？',
-      '夏天要注意防晒哦 &#9728;&#65039;',
-      '工作累了就歇歇吧 &#127958;&#65039;',
-      '想写点什么吗？',
-      '小蓝在陪着你呢~'
-    ];
+
+    const themes = {
+      dawn:     { label: '清晨',     greeting: '清晨的第一缕阳光，今天也要元气满满！&#127748;',               isSun: true },
+      morning:  { label: '上午',     greeting: '上午好！工作学习效率高，加油！&#9728;&#65039;',                 isSun: true },
+      noon:     { label: '中午',     greeting: '中午啦！记得吃饭休息哦~ &#127774;',                            isSun: true },
+      afternoon:{ label: '下午',     greeting: '下午好！喝杯茶提提神吧~ &#127861;',                            isSun: true },
+      evening:  { label: '傍晚',     greeting: '傍晚了，今天过得怎么样？&#127749;',                            isSun: true },
+      night:    { label: '晚上',     greeting: '晚上好！该放松休息一下啦~ &#127769;',                          isSun: false },
+      latenight:{ label: '深夜',     greeting: '夜深了，早点休息吧，晚安~ &#127776;',                          isSun: false }
+    };
+
+    function getThemeByHour(hour) {
+      if (hour >= 5 && hour < 9)  return 'dawn';
+      if (hour >= 9 && hour < 12) return 'morning';
+      if (hour >= 12 && hour < 14)return 'noon';
+      if (hour >= 14 && hour < 17)return 'afternoon';
+      if (hour >= 17 && hour < 20)return 'evening';
+      if (hour >= 20 && hour < 23)return 'night';
+      return 'latenight';
+    }
+
+    function updateTheme() {
+      const hour = new Date().getHours();
+      const themeName = getThemeByHour(hour);
+      const theme = themes[themeName];
+
+      // 移除所有主题类
+      petContainer.className = 'pet-container';
+      // 添加当前主题
+      petContainer.classList.add('theme-' + themeName);
+
+      // 更新时间标签
+      timeLabel.textContent = theme.label;
+
+      // 更新天体
+      if (theme.isSun) {
+        celestial.className = 'celestial sun';
+        celestial.innerHTML = `
+          <div class="sun-ray"></div>
+          <div class="sun-ray"></div>
+          <div class="sun-ray"></div>
+          <div class="sun-ray"></div>
+        `;
+      } else {
+        celestial.className = 'celestial moon';
+        celestial.innerHTML = `
+          <div class="star s1"></div>
+          <div class="star s2"></div>
+          <div class="star s3"></div>
+          <div class="star s4"></div>
+          <div class="star s5"></div>
+        `;
+      }
+    }
+
+    // 初始化和每小时更新主题
+    updateTheme();
+    setInterval(updateTheme, 60000);
 
     function createRipple(x, y) {
       const ripple = document.createElement('div');
@@ -652,10 +886,29 @@
       setTimeout(() => ripple.remove(), 900);
     }
 
-    function showRandomBubble() {
-      if (bubble.classList.contains('show')) return;
-      const msg = idleMessages[Math.floor(Math.random() * idleMessages.length)];
-      showBubble(msg, false);
+    async function showTodayPlans() {
+      const plans = await ipcRenderer.invoke('get-plans');
+      const today = new Date().toISOString().split('T')[0];
+      const todayPlansList = plans
+        .filter(p => !p.completed && (!p.date || p.date === today))
+        .sort((a, b) => (a.time || '').localeCompare(b.time || ''))
+        .slice(0, 3);
+
+      if (todayPlansList.length === 0) {
+        todayPlans.classList.remove('show');
+        return;
+      }
+
+      todayPlans.innerHTML = todayPlansList.map(p => `
+        <div class="plan-item">
+          <span class="plan-time">${p.time || '--:--'}</span>
+          <span class="plan-text">${p.content}</span>
+        </div>
+      `).join('');
+      todayPlans.classList.add('show');
+
+      // 5秒后自动隐藏
+      setTimeout(() => todayPlans.classList.remove('show'), 5000);
     }
 
     function showBubble(text, hasAction) {
@@ -670,34 +923,52 @@
       bubble.classList.remove('show');
     }
 
-    setTimeout(() => showBubble('你好！我是小蓝~ 点击我可以写日志哦 &#127754;', false), 1200);
-    setInterval(showRandomBubble, 35000);
+    // 初始欢迎气泡
+    setTimeout(() => {
+      const hour = new Date().getHours();
+      const themeName = getThemeByHour(hour);
+      showBubble(themes[themeName].greeting, false);
+    }, 1200);
 
+    // 点击宠物
     petBody.addEventListener('click', (e) => {
       e.stopPropagation();
+      e.preventDefault();
       createRipple(e.offsetX, e.offsetY);
       hideBubble();
       menu.classList.toggle('show');
       settingsPanel.classList.remove('show');
+      todayPlans.classList.remove('show');
       petContainer.classList.add('happy');
       setTimeout(() => petContainer.classList.remove('happy'), 700);
     });
 
-    petContainer.addEventListener('click', (e) => {
-      if (e.target === petContainer) {
-        menu.classList.remove('show');
-        settingsPanel.classList.remove('show');
-      }
-    });
-
+    // 右键显示今日计划
     petContainer.addEventListener('contextmenu', (e) => {
       e.preventDefault();
-      menu.classList.toggle('show');
+      e.stopPropagation();
+      menu.classList.remove('show');
       settingsPanel.classList.remove('show');
+      showTodayPlans();
+    });
+
+    // 点击空白关闭
+    petContainer.addEventListener('click', (e) => {
+      if (e.target === petContainer || e.target.classList.contains('bg-layer') || e.target.classList.contains('particles')) {
+        menu.classList.remove('show');
+        settingsPanel.classList.remove('show');
+        todayPlans.classList.remove('show');
+      }
     });
 
     function openLogWindow() {
       ipcRenderer.invoke('open-log-window');
+      hideBubble();
+      menu.classList.remove('show');
+    }
+
+    function openPlanWindow() {
+      ipcRenderer.invoke('open-plan-window');
       hideBubble();
       menu.classList.remove('show');
     }
@@ -710,6 +981,7 @@
     function toggleSettings() {
       settingsPanel.classList.toggle('show');
       menu.classList.remove('show');
+      todayPlans.classList.remove('show');
     }
 
     async function hidePet() {
@@ -740,6 +1012,12 @@
       showBubble(message, true);
     });
 
+    ipcRenderer.on('plan-reminder', (event, message) => {
+      petContainer.classList.add('reminding');
+      setTimeout(() => petContainer.classList.remove('reminding'), 2500);
+      showBubble(message, true);
+    });
+
     ipcRenderer.on('pet-action', (event, action) => {
       if (action === 'write') {
         showBubble('来记录今天的故事吧 &#128221;', false);
@@ -749,6 +1027,7 @@
     ipcRenderer.on('open-settings', () => {
       hideBubble();
       menu.classList.remove('show');
+      todayPlans.classList.remove('show');
       settingsPanel.classList.add('show');
     });
 
