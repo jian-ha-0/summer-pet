@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>日志记录 - 夏日宠物</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Microsoft YaHei', sans-serif;
+      background: linear-gradient(135deg, #E3F2FD 0%, #FFF3E0 50%, #E8F5E9 100%);
+      min-height: 100vh;
+      color: #333;
+    }
+    .header {
+      background: linear-gradient(90deg, #4FC3F7, #81C784);
+      padding: 20px 24px;
+      color: white;
+    }
+    .header h1 {
+      font-size: 20px;
+      font-weight: 500;
+    }
+    .header p {
+      font-size: 13px;
+      opacity: 0.9;
+      margin-top: 4px;
+    }
+    .container {
+      padding: 20px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+    .tab {
+      padding: 8px 20px;
+      border-radius: 20px;
+      border: none;
+      background: white;
+      color: #666;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    .tab.active {
+      background: #4FC3F7;
+      color: white;
+    }
+    .tab:hover:not(.active) {
+      background: #f5f5f5;
+    }
+
+    /* 写日志 */
+    .write-section {
+      background: white;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+    .date-display {
+      font-size: 14px;
+      color: #888;
+      margin-bottom: 16px;
+    }
+    .mood-selector {
+      margin-bottom: 16px;
+    }
+    .mood-selector label {
+      display: block;
+      font-size: 13px;
+      color: #666;
+      margin-bottom: 8px;
+    }
+    .moods {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .mood {
+      font-size: 28px;
+      cursor: pointer;
+      padding: 4px;
+      border-radius: 8px;
+      transition: all 0.2s;
+      opacity: 0.5;
+    }
+    .mood:hover, .mood.selected {
+      opacity: 1;
+      transform: scale(1.2);
+      background: #E3F2FD;
+    }
+    .log-textarea {
+      width: 100%;
+      min-height: 180px;
+      padding: 16px;
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
+      font-size: 14px;
+      line-height: 1.8;
+      resize: vertical;
+      transition: border-color 0.2s;
+      font-family: inherit;
+    }
+    .log-textarea:focus {
+      outline: none;
+      border-color: #4FC3F7;
+    }
+    .log-textarea::placeholder {
+      color: #bbb;
+    }
+    .tags-input {
+      margin-top: 12px;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .tag-input {
+      padding: 6px 12px;
+      border: 1px solid #ddd;
+      border-radius: 16px;
+      font-size: 12px;
+      outline: none;
+      width: 100px;
+    }
+    .tag-input:focus {
+      border-color: #4FC3F7;
+    }
+    .tag {
+      padding: 4px 10px;
+      background: #E3F2FD;
+      color: #0288D1;
+      border-radius: 12px;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .tag .remove {
+      cursor: pointer;
+      opacity: 0.6;
+    }
+    .tag .remove:hover {
+      opacity: 1;
+    }
+    .save-btn {
+      margin-top: 16px;
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(90deg, #4FC3F7, #81C784);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 15px;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    .save-btn:hover {
+      opacity: 0.9;
+    }
+    .save-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* 日志列表 */
+    .logs-section {
+      display: none;
+    }
+    .logs-section.active {
+      display: block;
+    }
+    .log-card {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      position: relative;
+    }
+    .log-card .log-date {
+      font-size: 12px;
+      color: #888;
+      margin-bottom: 8px;
+    }
+    .log-card .log-mood {
+      font-size: 24px;
+      position: absolute;
+      top: 16px;
+      right: 20px;
+    }
+    .log-card .log-content {
+      font-size: 14px;
+      line-height: 1.8;
+      color: #333;
+      white-space: pre-wrap;
+    }
+    .log-card .log-tags {
+      margin-top: 12px;
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .log-card .log-tag {
+      padding: 2px 8px;
+      background: #FFF3E0;
+      color: #F57C00;
+      border-radius: 10px;
+      font-size: 11px;
+    }
+    .log-card .log-delete {
+      position: absolute;
+      top: 16px;
+      right: 52px;
+      font-size: 12px;
+      color: #ccc;
+      cursor: pointer;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .log-card:hover .log-delete {
+      opacity: 1;
+    }
+    .log-card .log-delete:hover {
+      color: #ff6b6b;
+    }
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #bbb;
+    }
+    .empty-state .emoji {
+      font-size: 48px;
+      margin-bottom: 16px;
+    }
+    .stats-bar {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .stat-card {
+      background: white;
+      border-radius: 12px;
+      padding: 12px 20px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+      flex: 1;
+      min-width: 120px;
+    }
+    .stat-card .stat-value {
+      font-size: 22px;
+      font-weight: 600;
+      color: #4FC3F7;
+    }
+    .stat-card .stat-label {
+      font-size: 12px;
+      color: #888;
+      margin-top: 2px;
+    }
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: #333;
+      color: white;
+      padding: 10px 24px;
+      border-radius: 24px;
+      font-size: 14px;
+      opacity: 0;
+      transition: all 0.3s ease;
+      z-index: 1000;
+    }
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>🌊 夏日日志</h1>
+    <p>记录每一天的美好瞬间</p>
+  </div>
+
+  <div class="container">
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('write')">📝 写日志</button>
+      <button class="tab" onclick="switchTab('logs')">📋 我的日志</button>
+    </div>
+
+    <!-- 写日志 -->
+    <div class="write-section" id="writeSection">
+      <div class="date-display" id="dateDisplay"></div>
+
+      <div class="mood-selector">
+        <label>今天心情怎么样？</label>
+        <div class="moods">
+          <span class="mood" data-mood="happy" onclick="selectMood(this)">😊</span>
+          <span class="mood" data-mood="excited" onclick="selectMood(this)">🤩</span>
+          <span class="mood" data-mood="calm" onclick="selectMood(this)">😌</span>
+          <span class="mood" data-mood="tired" onclick="selectMood(this)">😴</span>
+          <span class="mood" data-mood="sad" onclick="selectMood(this)">😢</span>
+          <span class="mood" data-mood="angry" onclick="selectMood(this)">😠</span>
+          <span class="mood" data-mood="love" onclick="selectMood(this)">🥰</span>
+          <span class="mood" data-mood="cool" onclick="selectMood(this)">😎</span>
+        </div>
+      </div>
+
+      <textarea class="log-textarea" id="logContent" placeholder="今天发生了什么有趣的事？&#10;完成了什么工作？&#10;有什么感想？"></textarea>
+
+      <div class="tags-input" id="tagsContainer">
+        <input type="text" class="tag-input" id="tagInput" placeholder="+ 标签" onkeypress="handleTagInput(event)">
+      </div>
+
+      <button class="save-btn" id="saveBtn" onclick="saveLog()">💾 保存日志</button>
+    </div>
+
+    <!-- 日志列表 -->
+    <div class="logs-section" id="logsSection">
+      <div class="stats-bar" id="statsBar"></div>
+      <div id="logsList"></div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const { ipcRenderer } = require('electron');
+
+    let selectedMood = '';
+    let tags = [];
+
+    const moodEmojis = {
+      happy: '😊', excited: '🤩', calm: '😌', tired: '😴',
+      sad: '😢', angry: '😠', love: '🥰', cool: '😎'
+    };
+
+    const moodLabels = {
+      happy: '开心', excited: '兴奋', calm: '平静', tired: '疲惫',
+      sad: '难过', angry: '生气', love: '幸福', cool: '酷'
+    };
+
+    // 显示日期
+    function updateDate() {
+      const now = new Date();
+      const weekdays = ['日', '一', '二', '三', '四', '五', '六'];
+      document.getElementById('dateDisplay').textContent =
+        `${now.getFullYear()}年${now.getMonth()+1}月${now.getDate()}日 星期${weekdays[now.getDay()]} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+    }
+    updateDate();
+    setInterval(updateDate, 60000);
+
+    function selectMood(el) {
+      document.querySelectorAll('.mood').forEach(m => m.classList.remove('selected'));
+      el.classList.add('selected');
+      selectedMood = el.dataset.mood;
+    }
+
+    function handleTagInput(e) {
+      if (e.key === 'Enter') {
+        const val = e.target.value.trim();
+        if (val && !tags.includes(val)) {
+          tags.push(val);
+          renderTags();
+        }
+        e.target.value = '';
+      }
+    }
+
+    function renderTags() {
+      const container = document.getElementById('tagsContainer');
+      container.innerHTML = '';
+      tags.forEach((tag, i) => {
+        const span = document.createElement('span');
+        span.className = 'tag';
+        span.innerHTML = `${tag} <span class="remove" onclick="removeTag(${i})">×</span>`;
+        container.appendChild(span);
+      });
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.className = 'tag-input';
+      input.id = 'tagInput';
+      input.placeholder = tags.length ? '+ 标签' : '+ 添加标签';
+      input.onkeypress = handleTagInput;
+      container.appendChild(input);
+      input.focus();
+    }
+
+    function removeTag(i) {
+      tags.splice(i, 1);
+      renderTags();
+    }
+
+    async function saveLog() {
+      const content = document.getElementById('logContent').value.trim();
+      if (!content) {
+        showToast('请先写点什么吧~');
+        return;
+      }
+
+      const btn = document.getElementById('saveBtn');
+      btn.disabled = true;
+      btn.textContent = '保存中...';
+
+      await ipcRenderer.invoke('save-log', {
+        content,
+        mood: selectedMood,
+        tags
+      });
+
+      showToast('日志已保存！');
+      document.getElementById('logContent').value = '';
+      selectedMood = '';
+      tags = [];
+      document.querySelectorAll('.mood').forEach(m => m.classList.remove('selected'));
+      renderTags();
+      btn.disabled = false;
+      btn.textContent = '💾 保存日志';
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2500);
+    }
+
+    function switchTab(tab) {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      event.target.classList.add('active');
+
+      if (tab === 'write') {
+        document.getElementById('writeSection').style.display = 'block';
+        document.getElementById('logsSection').classList.remove('active');
+      } else {
+        document.getElementById('writeSection').style.display = 'none';
+        document.getElementById('logsSection').classList.add('active');
+        loadLogs();
+      }
+    }
+
+    async function loadLogs() {
+      const logs = await ipcRenderer.invoke('get-logs');
+      const list = document.getElementById('logsList');
+      const statsBar = document.getElementById('statsBar');
+
+      if (logs.length === 0) {
+        list.innerHTML = `
+          <div class="empty-state">
+            <div class="emoji">🏖️</div>
+            <p>还没有日志哦，去写一篇吧！</p>
+          </div>
+        `;
+        statsBar.innerHTML = '';
+        return;
+      }
+
+      // 统计
+      const moodCount = {};
+      logs.forEach(l => { moodCount[l.mood] = (moodCount[l.mood] || 0) + 1; });
+      const topMood = Object.entries(moodCount).sort((a,b) => b[1]-a[1])[0];
+
+      statsBar.innerHTML = `
+        <div class="stat-card">
+          <div class="stat-value">${logs.length}</div>
+          <div class="stat-label">总篇数</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">${topMood ? moodEmojis[topMood[0]] : '-'}</div>
+          <div class="stat-label">最常心情</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">${logs.filter(l => new Date(l.date).toDateString() === new Date().toDateString()).length}</div>
+          <div class="stat-label">今日</div>
+        </div>
+      `;
+
+      list.innerHTML = logs.map(log => {
+        const date = new Date(log.date);
+        const dateStr = `${date.getFullYear()}/${date.getMonth()+1}/${date.getDate()} ${String(date.getHours()).padStart(2,'0')}:${String(date.getMinutes()).padStart(2,'0')}`;
+        return `
+          <div class="log-card">
+            <span class="log-delete" onclick="deleteLog(${log.id})">删除</span>
+            <div class="log-date">${dateStr}</div>
+            <div class="log-mood">${moodEmojis[log.mood] || ''}</div>
+            <div class="log-content">${escapeHtml(log.content)}</div>
+            ${log.tags?.length ? `<div class="log-tags">${log.tags.map(t => `<span class="log-tag">${escapeHtml(t)}</span>`).join('')}</div>` : ''}
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function deleteLog(id) {
+      if (!confirm('确定删除这篇日志吗？')) return;
+      await ipcRenderer.invoke('delete-log', id);
+      loadLogs();
+      showToast('已删除');
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // 监听显示日志指令
+    ipcRenderer.on('show-logs', () => {
+      document.querySelectorAll('.tab')[1].click();
+    });
+  </script>
+</body>
+</html>

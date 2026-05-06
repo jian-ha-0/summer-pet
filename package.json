@@ -1,0 +1,23 @@
+{
+  "name": "summer-pet",
+  "version": "1.0.0",
+  "description": "夏日桌面宠物 - 日志提醒助手",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder"
+  },
+  "build": {
+    "appId": "com.summer.pet",
+    "productName": "夏日宠物",
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "target": "nsis"
+    }
+  },
+  "devDependencies": {
+    "electron": "^30.0.0"
+  }
+}
