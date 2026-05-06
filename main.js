@@ -40,9 +40,33 @@ function saveSettings(settings) {
 
 let petWindow;
 let logWindow;
+let splashWindow;
 let tray;
 let reminderTimer;
 let settings = loadSettings();
+
+function createSplashWindow() {
+  splashWindow = new BrowserWindow({
+    width: 400,
+    height: 300,
+    frame: false,
+    transparent: true,
+    alwaysOnTop: true,
+    center: true,
+    skipTaskbar: true,
+    resizable: false,
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false
+    }
+  });
+
+  splashWindow.loadFile(path.join(__dirname, 'splash.html'));
+
+  splashWindow.on('closed', () => {
+    splashWindow = null;
+  });
+}
 
 function createPetWindow() {
   const { width: screenW, height: screenH } = require('electron').screen.getPrimaryDisplay().workAreaSize;
@@ -284,9 +308,17 @@ ipcMain.handle('hide-pet', () => {
 });
 
 app.whenReady().then(() => {
-  createPetWindow();
-  createTray();
-  updateReminder();
+  createSplashWindow();
+
+  setTimeout(() => {
+    if (splashWindow) {
+      splashWindow.close();
+      splashWindow = null;
+    }
+    createPetWindow();
+    createTray();
+    updateReminder();
+  }, 2500);
 });
 
 app.on('window-all-closed', () => {

@@ -6,290 +6,496 @@
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      font-family: 'Microsoft YaHei', sans-serif;
-      background: linear-gradient(135deg, #E3F2FD 0%, #FFF3E0 50%, #E8F5E9 100%);
+      font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif;
+      background: linear-gradient(160deg, #E8F4FD 0%, #FFF8E7 30%, #FFF0E1 60%, #E8F5E9 100%);
       min-height: 100vh;
       color: #333;
     }
+
+    /* ===== 头部 ===== */
     .header {
-      background: linear-gradient(90deg, #4FC3F7, #81C784);
-      padding: 20px 24px;
+      background: linear-gradient(135deg, #4FC3F7 0%, #81C784 50%, #FFB74D 100%);
+      padding: 24px 28px;
       color: white;
+      box-shadow: 0 4px 20px rgba(79,195,247,0.3);
+      position: relative;
+      overflow: hidden;
+    }
+    .header::before {
+      content: '';
+      position: absolute;
+      top: -20px; right: -20px;
+      width: 100px; height: 100px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 50%;
+    }
+    .header::after {
+      content: '';
+      position: absolute;
+      bottom: -30px; left: 10%;
+      width: 60px; height: 60px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 50%;
     }
     .header h1 {
-      font-size: 20px;
-      font-weight: 500;
+      font-size: 22px;
+      font-weight: 600;
+      position: relative;
+      z-index: 1;
     }
     .header p {
       font-size: 13px;
       opacity: 0.9;
-      margin-top: 4px;
+      margin-top: 6px;
+      position: relative;
+      z-index: 1;
     }
+
     .container {
-      padding: 20px;
-      max-width: 800px;
+      padding: 24px;
+      max-width: 820px;
       margin: 0 auto;
     }
+
+    /* ===== 标签页 ===== */
     .tabs {
       display: flex;
-      gap: 8px;
-      margin-bottom: 20px;
+      gap: 12px;
+      margin-bottom: 24px;
     }
     .tab {
-      padding: 8px 20px;
-      border-radius: 20px;
+      padding: 10px 24px;
+      border-radius: 24px;
       border: none;
-      background: white;
+      background: rgba(255,255,255,0.8);
+      backdrop-filter: blur(10px);
       color: #666;
       font-size: 14px;
       cursor: pointer;
-      transition: all 0.2s;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+      font-weight: 500;
     }
     .tab.active {
-      background: #4FC3F7;
+      background: linear-gradient(135deg, #4FC3F7 0%, #29B6F6 100%);
       color: white;
+      box-shadow: 0 4px 16px rgba(41,182,246,0.35);
+      transform: translateY(-1px);
     }
     .tab:hover:not(.active) {
-      background: #f5f5f5;
+      background: white;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
     }
 
-    /* 写日志 */
+    /* ===== 写日志区域 ===== */
     .write-section {
-      background: white;
-      border-radius: 16px;
-      padding: 24px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 28px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+      border: 1px solid rgba(255,255,255,0.8);
     }
     .date-display {
       font-size: 14px;
       color: #888;
-      margin-bottom: 16px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
+    .date-display::before {
+      content: '';
+      width: 4px; height: 16px;
+      background: linear-gradient(180deg, #4FC3F7, #81C784);
+      border-radius: 2px;
+    }
+
     .mood-selector {
-      margin-bottom: 16px;
+      margin-bottom: 20px;
     }
     .mood-selector label {
       display: block;
-      font-size: 13px;
-      color: #666;
-      margin-bottom: 8px;
+      font-size: 14px;
+      color: #555;
+      margin-bottom: 12px;
+      font-weight: 500;
     }
     .moods {
       display: flex;
-      gap: 12px;
+      gap: 14px;
       flex-wrap: wrap;
     }
     .mood {
-      font-size: 28px;
+      font-size: 36px;
       cursor: pointer;
-      padding: 4px;
-      border-radius: 8px;
-      transition: all 0.2s;
-      opacity: 0.5;
+      padding: 8px;
+      border-radius: 16px;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      opacity: 0.45;
+      background: transparent;
+      filter: grayscale(0.3);
     }
-    .mood:hover, .mood.selected {
+    .mood:hover {
+      opacity: 0.85;
+      transform: scale(1.25) translateY(-4px);
+      filter: grayscale(0);
+    }
+    .mood.selected {
       opacity: 1;
-      transform: scale(1.2);
-      background: #E3F2FD;
+      transform: scale(1.3) translateY(-4px);
+      background: linear-gradient(135deg, #E3F2FD 0%, #FFF3E0 100%);
+      box-shadow: 0 4px 16px rgba(79,195,247,0.25);
+      filter: grayscale(0);
     }
+
     .log-textarea {
       width: 100%;
-      min-height: 180px;
-      padding: 16px;
-      border: 2px solid #e0e0e0;
-      border-radius: 12px;
-      font-size: 14px;
-      line-height: 1.8;
+      min-height: 200px;
+      padding: 18px;
+      border: 2px solid #E8E8E8;
+      border-radius: 16px;
+      font-size: 15px;
+      line-height: 1.9;
       resize: vertical;
-      transition: border-color 0.2s;
+      transition: all 0.3s;
       font-family: inherit;
+      background: #FAFBFC;
     }
     .log-textarea:focus {
       outline: none;
       border-color: #4FC3F7;
+      background: white;
+      box-shadow: 0 0 0 4px rgba(79,195,247,0.1);
     }
     .log-textarea::placeholder {
-      color: #bbb;
+      color: #BBB;
     }
+
     .tags-input {
-      margin-top: 12px;
+      margin-top: 16px;
       display: flex;
-      gap: 8px;
+      gap: 10px;
       flex-wrap: wrap;
+      align-items: center;
     }
     .tag-input {
-      padding: 6px 12px;
-      border: 1px solid #ddd;
-      border-radius: 16px;
-      font-size: 12px;
+      padding: 8px 14px;
+      border: 1.5px solid #E0E0E0;
+      border-radius: 20px;
+      font-size: 13px;
       outline: none;
-      width: 100px;
+      background: #FAFBFC;
+      transition: all 0.2s;
     }
     .tag-input:focus {
       border-color: #4FC3F7;
+      background: white;
+      box-shadow: 0 0 0 3px rgba(79,195,247,0.1);
     }
     .tag {
-      padding: 4px 10px;
-      background: #E3F2FD;
-      color: #0288D1;
-      border-radius: 12px;
+      padding: 5px 12px;
+      background: linear-gradient(135deg, #E3F2FD 0%, #F3E5F5 100%);
+      color: #0277BD;
+      border-radius: 16px;
       font-size: 12px;
       display: flex;
       align-items: center;
-      gap: 4px;
+      gap: 5px;
+      box-shadow: 0 2px 6px rgba(2,119,189,0.1);
+      animation: tagAppear 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    @keyframes tagAppear {
+      0% { transform: scale(0); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
     }
     .tag .remove {
       cursor: pointer;
-      opacity: 0.6;
+      opacity: 0.5;
+      transition: opacity 0.2s;
+      font-weight: bold;
     }
-    .tag .remove:hover {
-      opacity: 1;
-    }
+    .tag .remove:hover { opacity: 1; color: #FF5252; }
+
     .save-btn {
-      margin-top: 16px;
+      margin-top: 20px;
       width: 100%;
-      padding: 12px;
-      background: linear-gradient(90deg, #4FC3F7, #81C784);
+      padding: 14px;
+      background: linear-gradient(135deg, #4FC3F7 0%, #81C784 50%, #FFB74D 100%);
+      background-size: 200% 200%;
       color: white;
       border: none;
-      border-radius: 12px;
-      font-size: 15px;
+      border-radius: 14px;
+      font-size: 16px;
       cursor: pointer;
-      transition: opacity 0.2s;
+      transition: all 0.3s;
+      font-weight: 600;
+      box-shadow: 0 4px 16px rgba(79,195,247,0.3);
+      letter-spacing: 1px;
     }
     .save-btn:hover {
-      opacity: 0.9;
+      background-position: 100% 0;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(79,195,247,0.4);
     }
     .save-btn:disabled {
       opacity: 0.5;
       cursor: not-allowed;
+      transform: none;
     }
 
-    /* 日志列表 */
-    .logs-section {
-      display: none;
+    /* ===== 统计卡片 ===== */
+    .stats-bar {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
     }
-    .logs-section.active {
-      display: block;
+    .stat-card {
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      padding: 16px 22px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+      flex: 1;
+      min-width: 130px;
+      text-align: center;
+      border: 1px solid rgba(255,255,255,0.8);
+      transition: all 0.3s;
     }
-    .log-card {
-      background: white;
+    .stat-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+    }
+    .stat-card .stat-value {
+      font-size: 26px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #4FC3F7, #81C784);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .stat-card .stat-label {
+      font-size: 12px;
+      color: #888;
+      margin-top: 4px;
+    }
+
+    /* 心情分布条形图 */
+    .mood-chart {
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(10px);
       border-radius: 16px;
       padding: 20px;
-      margin-bottom: 16px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      margin-bottom: 24px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+      border: 1px solid rgba(255,255,255,0.8);
+    }
+    .mood-chart h4 {
+      font-size: 14px;
+      color: #555;
+      margin-bottom: 14px;
+      font-weight: 500;
+    }
+    .chart-row {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+      gap: 10px;
+    }
+    .chart-emoji {
+      font-size: 20px;
+      width: 28px;
+      text-align: center;
+    }
+    .chart-bar-bg {
+      flex: 1;
+      height: 10px;
+      background: #F0F0F0;
+      border-radius: 5px;
+      overflow: hidden;
+    }
+    .chart-bar-fill {
+      height: 100%;
+      border-radius: 5px;
+      transition: width 0.6s ease-out;
+      min-width: 4px;
+    }
+    .chart-count {
+      font-size: 12px;
+      color: #888;
+      min-width: 20px;
+      text-align: right;
+    }
+
+    /* ===== 日志列表 - 时间线样式 ===== */
+    .logs-section { display: none; }
+    .logs-section.active { display: block; }
+
+    .timeline {
       position: relative;
+      padding-left: 28px;
+    }
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 10px;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: linear-gradient(180deg, #4FC3F7 0%, #81C784 50%, #FFB74D 100%);
+      border-radius: 1px;
+    }
+
+    .log-card {
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(10px);
+      border-radius: 18px;
+      padding: 22px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+      position: relative;
+      border: 1px solid rgba(255,255,255,0.8);
+      transition: all 0.3s;
+    }
+    .log-card:hover {
+      transform: translateX(4px);
+      box-shadow: 0 8px 28px rgba(0,0,0,0.1);
+    }
+    .log-card::before {
+      content: '';
+      position: absolute;
+      left: -24px;
+      top: 26px;
+      width: 12px;
+      height: 12px;
+      background: linear-gradient(135deg, #4FC3F7, #81C784);
+      border-radius: 50%;
+      border: 3px solid white;
+      box-shadow: 0 2px 8px rgba(79,195,247,0.3);
     }
     .log-card .log-date {
       font-size: 12px;
-      color: #888;
-      margin-bottom: 8px;
+      color: #999;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
     .log-card .log-mood {
-      font-size: 24px;
+      font-size: 32px;
       position: absolute;
-      top: 16px;
-      right: 20px;
+      top: 18px;
+      right: 22px;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+      transition: transform 0.3s;
+    }
+    .log-card:hover .log-mood {
+      transform: scale(1.15) rotate(5deg);
     }
     .log-card .log-content {
-      font-size: 14px;
+      font-size: 15px;
       line-height: 1.8;
       color: #333;
       white-space: pre-wrap;
+      padding-right: 40px;
     }
     .log-card .log-tags {
-      margin-top: 12px;
+      margin-top: 14px;
       display: flex;
-      gap: 6px;
+      gap: 8px;
       flex-wrap: wrap;
     }
     .log-card .log-tag {
-      padding: 2px 8px;
-      background: #FFF3E0;
-      color: #F57C00;
-      border-radius: 10px;
+      padding: 3px 10px;
+      background: linear-gradient(135deg, #FFF3E0 0%, #FFE0B2 100%);
+      color: #E65100;
+      border-radius: 12px;
       font-size: 11px;
+      box-shadow: 0 1px 4px rgba(230,81,0,0.08);
     }
     .log-card .log-delete {
       position: absolute;
-      top: 16px;
-      right: 52px;
+      top: 18px;
+      right: 56px;
       font-size: 12px;
-      color: #ccc;
+      color: #DDD;
       cursor: pointer;
       opacity: 0;
-      transition: opacity 0.2s;
+      transition: all 0.2s;
+      padding: 4px 8px;
+      border-radius: 8px;
     }
     .log-card:hover .log-delete {
       opacity: 1;
     }
     .log-card .log-delete:hover {
-      color: #ff6b6b;
+      color: #FF5252;
+      background: rgba(255,82,82,0.08);
     }
+
     .empty-state {
       text-align: center;
-      padding: 60px 20px;
-      color: #bbb;
+      padding: 80px 20px;
+      color: #CCC;
     }
     .empty-state .emoji {
-      font-size: 48px;
-      margin-bottom: 16px;
-    }
-    .stats-bar {
-      display: flex;
-      gap: 16px;
+      font-size: 56px;
       margin-bottom: 20px;
-      flex-wrap: wrap;
+      filter: grayscale(0.3);
+      animation: emptyFloat 3s ease-in-out infinite;
     }
-    .stat-card {
-      background: white;
-      border-radius: 12px;
-      padding: 12px 20px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.06);
-      flex: 1;
-      min-width: 120px;
+    @keyframes emptyFloat {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
     }
-    .stat-card .stat-value {
-      font-size: 22px;
-      font-weight: 600;
-      color: #4FC3F7;
+    .empty-state p {
+      font-size: 15px;
+      color: #AAA;
     }
-    .stat-card .stat-label {
-      font-size: 12px;
-      color: #888;
-      margin-top: 2px;
-    }
+
     .toast {
       position: fixed;
-      bottom: 20px;
+      bottom: 24px;
       left: 50%;
       transform: translateX(-50%) translateY(100px);
-      background: #333;
+      background: linear-gradient(135deg, #333 0%, #444 100%);
       color: white;
-      padding: 10px 24px;
-      border-radius: 24px;
+      padding: 12px 28px;
+      border-radius: 28px;
       font-size: 14px;
       opacity: 0;
-      transition: all 0.3s ease;
+      transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
       z-index: 1000;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.2);
     }
     .toast.show {
       transform: translateX(-50%) translateY(0);
       opacity: 1;
     }
+
+    /* 心情颜色映射 */
+    .mood-happy { background: linear-gradient(90deg, #FFF176, #FFD54F) !important; }
+    .mood-excited { background: linear-gradient(90deg, #FF8A65, #FF7043) !important; }
+    .mood-calm { background: linear-gradient(90deg, #A5D6A7, #81C784) !important; }
+    .mood-tired { background: linear-gradient(90deg, #B39DDB, #9575CD) !important; }
+    .mood-sad { background: linear-gradient(90deg, #90CAF9, #64B5F6) !important; }
+    .mood-angry { background: linear-gradient(90deg, #EF9A9A, #E57373) !important; }
+    .mood-love { background: linear-gradient(90deg, #F48FB1, #F06292) !important; }
+    .mood-cool { background: linear-gradient(90deg, #80DEEA, #4DD0E1) !important; }
   </style>
 </head>
 <body>
   <div class="header">
-    <h1>🌊 夏日日志</h1>
+    <h1>&#127754; 夏日日志</h1>
     <p>记录每一天的美好瞬间</p>
   </div>
 
   <div class="container">
     <div class="tabs">
-      <button class="tab active" onclick="switchTab('write')">📝 写日志</button>
-      <button class="tab" onclick="switchTab('logs')">📋 我的日志</button>
+      <button class="tab active" onclick="switchTab('write')">&#128221; 写日志</button>
+      <button class="tab" onclick="switchTab('logs')">&#128203; 我的日志</button>
     </div>
 
     <!-- 写日志 -->
@@ -299,14 +505,14 @@
       <div class="mood-selector">
         <label>今天心情怎么样？</label>
         <div class="moods">
-          <span class="mood" data-mood="happy" onclick="selectMood(this)">😊</span>
-          <span class="mood" data-mood="excited" onclick="selectMood(this)">🤩</span>
-          <span class="mood" data-mood="calm" onclick="selectMood(this)">😌</span>
-          <span class="mood" data-mood="tired" onclick="selectMood(this)">😴</span>
-          <span class="mood" data-mood="sad" onclick="selectMood(this)">😢</span>
-          <span class="mood" data-mood="angry" onclick="selectMood(this)">😠</span>
-          <span class="mood" data-mood="love" onclick="selectMood(this)">🥰</span>
-          <span class="mood" data-mood="cool" onclick="selectMood(this)">😎</span>
+          <span class="mood" data-mood="happy" onclick="selectMood(this)">&#128522;</span>
+          <span class="mood" data-mood="excited" onclick="selectMood(this)">&#129321;</span>
+          <span class="mood" data-mood="calm" onclick="selectMood(this)">&#128524;</span>
+          <span class="mood" data-mood="tired" onclick="selectMood(this)">&#128564;</span>
+          <span class="mood" data-mood="sad" onclick="selectMood(this)">&#128546;</span>
+          <span class="mood" data-mood="angry" onclick="selectMood(this)">&#128544;</span>
+          <span class="mood" data-mood="love" onclick="selectMood(this)">&#129392;</span>
+          <span class="mood" data-mood="cool" onclick="selectMood(this)">&#128526;</span>
         </div>
       </div>
 
@@ -316,13 +522,17 @@
         <input type="text" class="tag-input" id="tagInput" placeholder="+ 标签" onkeypress="handleTagInput(event)">
       </div>
 
-      <button class="save-btn" id="saveBtn" onclick="saveLog()">💾 保存日志</button>
+      <button class="save-btn" id="saveBtn" onclick="saveLog()">&#128190; 保存日志</button>
     </div>
 
     <!-- 日志列表 -->
     <div class="logs-section" id="logsSection">
       <div class="stats-bar" id="statsBar"></div>
-      <div id="logsList"></div>
+      <div class="mood-chart" id="moodChart" style="display:none">
+        <h4>&#127912; 心情分布</h4>
+        <div id="chartContent"></div>
+      </div>
+      <div class="timeline" id="logsList"></div>
     </div>
   </div>
 
@@ -335,8 +545,8 @@
     let tags = [];
 
     const moodEmojis = {
-      happy: '😊', excited: '🤩', calm: '😌', tired: '😴',
-      sad: '😢', angry: '😠', love: '🥰', cool: '😎'
+      happy: '&#128522;', excited: '&#129321;', calm: '&#128524;', tired: '&#128564;',
+      sad: '&#128546;', angry: '&#128544;', love: '&#129392;', cool: '&#128526;'
     };
 
     const moodLabels = {
@@ -344,7 +554,11 @@
       sad: '难过', angry: '生气', love: '幸福', cool: '酷'
     };
 
-    // 显示日期
+    const moodColors = {
+      happy: 'mood-happy', excited: 'mood-excited', calm: 'mood-calm', tired: 'mood-tired',
+      sad: 'mood-sad', angry: 'mood-angry', love: 'mood-love', cool: 'mood-cool'
+    };
+
     function updateDate() {
       const now = new Date();
       const weekdays = ['日', '一', '二', '三', '四', '五', '六'];
@@ -377,7 +591,7 @@
       tags.forEach((tag, i) => {
         const span = document.createElement('span');
         span.className = 'tag';
-        span.innerHTML = `${tag} <span class="remove" onclick="removeTag(${i})">×</span>`;
+        span.innerHTML = `${tag} <span class="remove" onclick="removeTag(${i})">&times;</span>`;
         container.appendChild(span);
       });
       const input = document.createElement('input');
@@ -419,12 +633,12 @@
       document.querySelectorAll('.mood').forEach(m => m.classList.remove('selected'));
       renderTags();
       btn.disabled = false;
-      btn.textContent = '💾 保存日志';
+      btn.textContent = '&#128190; 保存日志';
     }
 
     function showToast(msg) {
       const toast = document.getElementById('toast');
-      toast.textContent = msg;
+      toast.innerHTML = msg;
       toast.classList.add('show');
       setTimeout(() => toast.classList.remove('show'), 2500);
     }
@@ -443,6 +657,33 @@
       }
     }
 
+    function renderChart(moodCount, total) {
+      const chartDiv = document.getElementById('moodChart');
+      const content = document.getElementById('chartContent');
+
+      if (total === 0) {
+        chartDiv.style.display = 'none';
+        return;
+      }
+      chartDiv.style.display = 'block';
+
+      const entries = Object.entries(moodCount).sort((a, b) => b[1] - a[1]);
+      const maxCount = entries[0][1];
+
+      content.innerHTML = entries.map(([mood, count]) => {
+        const pct = Math.round((count / maxCount) * 100);
+        return `
+          <div class="chart-row">
+            <span class="chart-emoji">${moodEmojis[mood] || ''}</span>
+            <div class="chart-bar-bg">
+              <div class="chart-bar-fill ${moodColors[mood] || ''}" style="width: ${pct}%"></div>
+            </div>
+            <span class="chart-count">${count}</span>
+          </div>
+        `;
+      }).join('');
+    }
+
     async function loadLogs() {
       const logs = await ipcRenderer.invoke('get-logs');
       const list = document.getElementById('logsList');
@@ -451,15 +692,15 @@
       if (logs.length === 0) {
         list.innerHTML = `
           <div class="empty-state">
-            <div class="emoji">🏖️</div>
+            <div class="emoji">&#127958;&#65039;</div>
             <p>还没有日志哦，去写一篇吧！</p>
           </div>
         `;
         statsBar.innerHTML = '';
+        document.getElementById('moodChart').style.display = 'none';
         return;
       }
 
-      // 统计
       const moodCount = {};
       logs.forEach(l => { moodCount[l.mood] = (moodCount[l.mood] || 0) + 1; });
       const topMood = Object.entries(moodCount).sort((a,b) => b[1]-a[1])[0];
@@ -479,13 +720,15 @@
         </div>
       `;
 
+      renderChart(moodCount, logs.length);
+
       list.innerHTML = logs.map(log => {
         const date = new Date(log.date);
         const dateStr = `${date.getFullYear()}/${date.getMonth()+1}/${date.getDate()} ${String(date.getHours()).padStart(2,'0')}:${String(date.getMinutes()).padStart(2,'0')}`;
         return `
           <div class="log-card">
             <span class="log-delete" onclick="deleteLog(${log.id})">删除</span>
-            <div class="log-date">${dateStr}</div>
+            <div class="log-date">&#128197; ${dateStr}</div>
             <div class="log-mood">${moodEmojis[log.mood] || ''}</div>
             <div class="log-content">${escapeHtml(log.content)}</div>
             ${log.tags?.length ? `<div class="log-tags">${log.tags.map(t => `<span class="log-tag">${escapeHtml(t)}</span>`).join('')}</div>` : ''}
@@ -507,7 +750,6 @@
       return div.innerHTML;
     }
 
-    // 监听显示日志指令
     ipcRenderer.on('show-logs', () => {
       document.querySelectorAll('.tab')[1].click();
     });

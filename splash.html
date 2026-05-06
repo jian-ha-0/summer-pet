@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>夏日宠物</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      overflow: hidden;
+      background: transparent;
+      font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+    .splash {
+      width: 360px;
+      height: 260px;
+      background: linear-gradient(160deg, #E3F2FD 0%, #FFF8E1 40%, #FFE0B2 100%);
+      border-radius: 24px;
+      box-shadow: 0 20px 60px rgba(79,195,247,0.25), 0 0 0 1px rgba(255,255,255,0.5) inset;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* 太阳 */
+    .sun {
+      position: absolute;
+      top: 20px;
+      right: 30px;
+      width: 36px;
+      height: 36px;
+      background: radial-gradient(circle, #FFEB3B 0%, #FFD54F 50%, #FF9800 100%);
+      border-radius: 50%;
+      box-shadow: 0 0 20px rgba(255, 213, 79, 0.5);
+      animation: sunPulse 2s ease-in-out infinite;
+    }
+    @keyframes sunPulse {
+      0%, 100% { transform: scale(1); opacity: 0.9; }
+      50% { transform: scale(1.15); opacity: 1; }
+    }
+
+    /* 小海豚图标 */
+    .dolphin-icon {
+      width: 80px;
+      height: 60px;
+      position: relative;
+      margin-bottom: 16px;
+      animation: iconFloat 2s ease-in-out infinite;
+    }
+    .dolphin-icon-body {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 45px;
+      background: linear-gradient(180deg, #4FC3F7 0%, #0288D1 100%);
+      border-radius: 50% 50% 45% 45%;
+    }
+    .dolphin-icon-body::before {
+      content: '';
+      position: absolute;
+      top: -10px;
+      left: 18px;
+      width: 0;
+      height: 0;
+      border-left: 12px solid transparent;
+      border-right: 12px solid transparent;
+      border-bottom: 18px solid #4FC3F7;
+      transform: rotate(-8deg);
+    }
+    .dolphin-icon-tail {
+      position: absolute;
+      bottom: 10px;
+      right: 2px;
+      width: 24px;
+      height: 18px;
+      background: #0288D1;
+      border-radius: 0 50% 50% 0;
+      animation: tailWag 1.5s ease-in-out infinite;
+      transform-origin: left center;
+    }
+    .dolphin-icon-eye {
+      position: absolute;
+      width: 7px;
+      height: 8px;
+      background: #1a1a2e;
+      border-radius: 50%;
+      top: 16px;
+      z-index: 5;
+    }
+    .dolphin-icon-eye.left { left: 16px; }
+    .dolphin-icon-eye.right { right: 22px; }
+    .dolphin-icon-eye::after {
+      content: '';
+      position: absolute;
+      top: 1px;
+      right: 1px;
+      width: 2.5px;
+      height: 2.5px;
+      background: white;
+      border-radius: 50%;
+    }
+
+    @keyframes iconFloat {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+    }
+    @keyframes tailWag {
+      0%, 100% { transform: rotate(-10deg); }
+      50% { transform: rotate(10deg); }
+    }
+
+    /* 文字 */
+    .title {
+      font-size: 22px;
+      font-weight: 600;
+      color: #0277BD;
+      letter-spacing: 2px;
+      margin-bottom: 8px;
+    }
+    .subtitle {
+      font-size: 12px;
+      color: #81C784;
+      letter-spacing: 1px;
+    }
+
+    /* 加载条 */
+    .loading-bar {
+      position: absolute;
+      bottom: 30px;
+      width: 120px;
+      height: 3px;
+      background: rgba(79,195,247,0.2);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .loading-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #4FC3F7, #81C784);
+      border-radius: 2px;
+      animation: loadProgress 2s ease-out forwards;
+    }
+    @keyframes loadProgress {
+      0% { width: 0%; }
+      100% { width: 100%; }
+    }
+
+    /* 粒子 */
+    .particle {
+      position: absolute;
+      border-radius: 50%;
+      opacity: 0;
+    }
+    .p1 { width: 4px; height: 4px; background: #FFD54F; top: 30%; left: 15%; animation: pFloat 2s ease-in-out infinite; }
+    .p2 { width: 3px; height: 3px; background: #81D4FA; top: 60%; left: 80%; animation: pFloat 2.5s ease-in-out infinite 0.5s; }
+    .p3 { width: 3px; height: 3px; background: #FFD54F; top: 20%; left: 70%; animation: pFloat 2s ease-in-out infinite 1s; }
+    @keyframes pFloat {
+      0% { transform: translateY(0) scale(0); opacity: 0; }
+      30% { opacity: 0.7; }
+      100% { transform: translateY(-30px) scale(0.5); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="splash">
+    <div class="particle p1"></div>
+    <div class="particle p2"></div>
+    <div class="particle p3"></div>
+
+    <div class="sun"></div>
+
+    <div class="dolphin-icon">
+      <div class="dolphin-icon-tail"></div>
+      <div class="dolphin-icon-body">
+        <div class="dolphin-icon-eye left"></div>
+        <div class="dolphin-icon-eye right"></div>
+      </div>
+    </div>
+
+    <div class="title">夏日宠物</div>
+    <div class="subtitle">正在唤醒小蓝...</div>
+
+    <div class="loading-bar">
+      <div class="loading-bar-fill"></div>
+    </div>
+  </div>
+</body>
+</html>

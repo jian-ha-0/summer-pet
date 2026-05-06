@@ -8,202 +8,339 @@
     body {
       overflow: hidden;
       background: transparent;
-      font-family: 'Microsoft YaHei', sans-serif;
+      font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif;
       user-select: none;
       -webkit-app-region: drag;
     }
     .pet-container {
-      width: 200px;
-      height: 260px;
+      width: 220px;
+      height: 300px;
       position: relative;
       cursor: move;
     }
+
+    /* ===== 光斑粒子 ===== */
+    .particles {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
+    .particle {
+      position: absolute;
+      border-radius: 50%;
+      opacity: 0;
+      pointer-events: none;
+    }
+    .particle.p1 { width: 4px; height: 4px; background: #FFD54F; top: 20%; left: 15%; animation: particleFloat 4s ease-in-out infinite; }
+    .particle.p2 { width: 6px; height: 6px; background: #81D4FA; top: 60%; left: 80%; animation: particleFloat 5s ease-in-out infinite 1s; }
+    .particle.p3 { width: 3px; height: 3px; background: #FFF; top: 40%; left: 75%; animation: particleFloat 3.5s ease-in-out infinite 0.5s; }
+    .particle.p4 { width: 5px; height: 5px; background: #FFD54F; top: 70%; left: 20%; animation: particleFloat 4.5s ease-in-out infinite 2s; }
+    .particle.p5 { width: 3px; height: 3px; background: #B3E5FC; top: 10%; left: 60%; animation: particleFloat 3s ease-in-out infinite 1.5s; }
+    .particle.p6 { width: 4px; height: 4px; background: #FFE082; top: 85%; left: 50%; animation: particleFloat 5.5s ease-in-out infinite 0.8s; }
+
+    @keyframes particleFloat {
+      0% { transform: translateY(0) scale(0); opacity: 0; }
+      20% { transform: translateY(-10px) scale(1); opacity: 0.8; }
+      80% { transform: translateY(-40px) scale(0.6); opacity: 0.4; }
+      100% { transform: translateY(-60px) scale(0); opacity: 0; }
+    }
+
+    /* ===== 太阳 ===== */
+    .sun {
+      position: absolute;
+      top: 8px;
+      right: 15px;
+      width: 44px;
+      height: 44px;
+      background: radial-gradient(circle, #FFEB3B 0%, #FFD54F 50%, #FF9800 100%);
+      border-radius: 50%;
+      box-shadow:
+        0 0 20px rgba(255, 213, 79, 0.6),
+        0 0 40px rgba(255, 213, 79, 0.3),
+        0 0 60px rgba(255, 213, 79, 0.1);
+      animation: sunPulse 3s ease-in-out infinite;
+      z-index: 2;
+    }
+    .sun::before {
+      content: '';
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 60px; height: 60px;
+      border: 2px solid rgba(255, 213, 79, 0.25);
+      border-radius: 50%;
+      animation: sunRing 3s ease-in-out infinite;
+    }
+    .sun::after {
+      content: '';
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 75px; height: 75px;
+      border: 1px solid rgba(255, 213, 79, 0.12);
+      border-radius: 50%;
+      animation: sunRing 3s ease-in-out infinite 0.5s;
+    }
+    .sun-ray {
+      position: absolute;
+      top: 50%; left: 50%;
+      width: 80px; height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(255,213,79,0.3), transparent);
+      transform-origin: center;
+      animation: sunRayRotate 8s linear infinite;
+    }
+    .sun-ray:nth-child(2) { animation-delay: -2s; height: 1.5px; width: 70px; }
+    .sun-ray:nth-child(3) { animation-delay: -4s; height: 1px; width: 60px; }
+    .sun-ray:nth-child(4) { animation-delay: -6s; height: 1.5px; width: 72px; }
+
+    @keyframes sunPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.08); }
+    }
+    @keyframes sunRing {
+      0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.6; }
+      50% { transform: translate(-50%, -50%) scale(1.15); opacity: 0.2; }
+    }
+    @keyframes sunRayRotate {
+      0% { transform: translate(-50%, -50%) rotate(0deg); }
+      100% { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+
+    /* ===== 海豚 ===== */
     .pet-body {
       position: absolute;
       bottom: 0;
       left: 50%;
       transform: translateX(-50%);
-      width: 140px;
-      height: 120px;
-    }
-    /* 小海豚身体 */
-    .dolphin-body {
-      position: absolute;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 100px;
-      height: 80px;
-      background: linear-gradient(180deg, #4FC3F7 0%, #0288D1 100%);
-      border-radius: 50% 50% 45% 45%;
-      animation: float 2s ease-in-out infinite;
-    }
-    .dolphin-body::before {
-      content: '';
-      position: absolute;
-      top: -15px;
-      left: 30px;
-      width: 0;
-      height: 0;
-      border-left: 20px solid transparent;
-      border-right: 20px solid transparent;
-      border-bottom: 25px solid #4FC3F7;
-      transform: rotate(-10deg);
+      width: 160px;
+      height: 150px;
+      z-index: 5;
     }
     .dolphin-tail {
       position: absolute;
-      bottom: 35px;
-      right: 15px;
-      width: 40px;
-      height: 30px;
-      background: #0288D1;
-      border-radius: 0 50% 50% 0;
-      animation: tailWag 1.5s ease-in-out infinite;
+      bottom: 55px;
+      right: 20px;
+      width: 45px;
+      height: 35px;
+      background: linear-gradient(135deg, #0277BD 0%, #01579B 100%);
+      border-radius: 0 60% 60% 0;
+      animation: tailWag 1.8s ease-in-out infinite;
       transform-origin: left center;
+      filter: drop-shadow(0 2px 4px rgba(2,119,189,0.3));
     }
     .dolphin-tail::after {
       content: '';
       position: absolute;
-      top: -8px;
+      top: -10px;
       right: 0;
-      width: 30px;
-      height: 15px;
-      background: #0277BD;
-      border-radius: 0 50% 50% 0;
-      transform: rotate(-20deg);
+      width: 32px;
+      height: 18px;
+      background: linear-gradient(135deg, #0288D1 0%, #0277BD 100%);
+      border-radius: 0 60% 60% 0;
+      transform: rotate(-22deg);
     }
     .dolphin-tail::before {
       content: '';
       position: absolute;
-      bottom: -8px;
+      bottom: -10px;
       right: 0;
-      width: 30px;
-      height: 15px;
-      background: #0277BD;
-      border-radius: 0 50% 50% 0;
-      transform: rotate(20deg);
+      width: 32px;
+      height: 18px;
+      background: linear-gradient(135deg, #0288D1 0%, #0277BD 100%);
+      border-radius: 0 60% 60% 0;
+      transform: rotate(22deg);
     }
-    /* 眼睛 */
+    .dolphin-body {
+      position: absolute;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 110px;
+      height: 90px;
+      background: linear-gradient(180deg, #4FC3F7 0%, #29B6F6 40%, #0288D1 100%);
+      border-radius: 55% 55% 48% 48%;
+      animation: float 2.5s ease-in-out infinite;
+      box-shadow:
+        inset -8px -5px 15px rgba(2,119,189,0.2),
+        inset 8px 5px 15px rgba(255,255,255,0.15),
+        0 8px 20px rgba(2,136,209,0.25);
+    }
+    .dolphin-body::before {
+      content: '';
+      position: absolute;
+      top: -18px;
+      left: 35px;
+      width: 0;
+      height: 0;
+      border-left: 22px solid transparent;
+      border-right: 22px solid transparent;
+      border-bottom: 28px solid #4FC3F7;
+      transform: rotate(-8deg);
+      filter: drop-shadow(0 2px 3px rgba(2,119,189,0.2));
+    }
+    .dolphin-body::after {
+      content: '';
+      position: absolute;
+      top: 15px;
+      left: 18px;
+      width: 30px;
+      height: 18px;
+      background: linear-gradient(135deg, rgba(255,255,255,0.35) 0%, rgba(255,255,255,0.05) 100%);
+      border-radius: 50%;
+      transform: rotate(-20deg);
+    }
+    .dolphin-highlight {
+      position: absolute;
+      top: 22px;
+      right: 20px;
+      width: 20px;
+      height: 12px;
+      background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, transparent 100%);
+      border-radius: 50%;
+      transform: rotate(15deg);
+    }
+
     .eye {
       position: absolute;
-      width: 12px;
-      height: 14px;
-      background: #1a1a2e;
+      width: 14px;
+      height: 16px;
+      background: radial-gradient(circle at 35% 35%, #2c2c54 0%, #1a1a2e 60%, #0f0f1e 100%);
       border-radius: 50%;
-      top: 30px;
+      top: 32px;
       z-index: 10;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
     }
-    .eye.left { left: 25px; }
-    .eye.right { right: 35px; }
+    .eye.left { left: 28px; }
+    .eye.right { right: 38px; }
     .eye::after {
       content: '';
       position: absolute;
-      top: 2px;
-      right: 2px;
-      width: 4px;
-      height: 4px;
-      background: white;
+      top: 3px;
+      right: 3px;
+      width: 5px;
+      height: 5px;
+      background: radial-gradient(circle, #fff 0%, rgba(255,255,255,0.7) 100%);
       border-radius: 50%;
+      box-shadow: 0 0 2px rgba(255,255,255,0.5);
     }
-    /* 嘴巴 */
+    .eye { animation: blink 4s infinite; }
+
     .mouth {
       position: absolute;
-      bottom: 25px;
-      left: 45px;
-      width: 15px;
-      height: 8px;
-      border-bottom: 2px solid #1a1a2e;
+      bottom: 30px;
+      left: 50px;
+      width: 16px;
+      height: 9px;
+      border-bottom: 2.5px solid #1a1a2e;
       border-radius: 0 0 50% 50%;
       z-index: 10;
     }
-    /* 腮红 */
     .cheek {
       position: absolute;
-      top: 40px;
-      width: 16px;
-      height: 10px;
-      background: rgba(255, 107, 107, 0.4);
+      top: 45px;
+      width: 18px;
+      height: 12px;
+      background: radial-gradient(circle, rgba(255, 138, 128, 0.5) 0%, rgba(255, 138, 128, 0.15) 70%, transparent 100%);
       border-radius: 50%;
       z-index: 10;
     }
-    .cheek.left { left: 12px; }
-    .cheek.right { right: 22px; }
+    .cheek.left { left: 14px; }
+    .cheek.right { right: 24px; }
 
-    /* 海浪底座 */
+    /* ===== 海浪 ===== */
     .waves {
       position: absolute;
       bottom: 0;
       left: 0;
       width: 100%;
-      height: 25px;
+      height: 35px;
       overflow: hidden;
+      z-index: 3;
     }
     .wave {
       position: absolute;
       bottom: 0;
-      width: 200%;
-      height: 20px;
-      background: repeating-linear-gradient(
-        90deg,
-        transparent,
-        transparent 10px,
-        #4FC3F7 10px,
-        #4FC3F7 20px,
-        transparent 20px,
-        transparent 30px
-      );
-      opacity: 0.5;
-      animation: waveMove 3s linear infinite;
+      width: 400px;
+      height: 25px;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120'%3E%3Cpath fill='%234FC3F7' fill-opacity='0.35' d='M0,60 C150,120 350,0 600,60 C850,120 1050,0 1200,60 L1200,120 L0,120 Z'/%3E%3C/svg%3E") repeat-x;
+      background-size: 200px 25px;
+      animation: waveMove 4s linear infinite;
     }
     .wave:nth-child(2) {
-      animation-delay: -1s;
-      opacity: 0.3;
+      animation-delay: -1.3s;
+      opacity: 0.6;
       bottom: 5px;
+      animation-duration: 5s;
+    }
+    .wave:nth-child(3) {
+      animation-delay: -2.6s;
+      opacity: 0.3;
+      bottom: 10px;
+      animation-duration: 6s;
+    }
+    @keyframes waveMove {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-200px); }
     }
 
-    /* 太阳 */
-    .sun {
+    /* ===== 水波纹效果 ===== */
+    .ripple-container {
       position: absolute;
-      top: 5px;
-      right: 10px;
-      width: 40px;
-      height: 40px;
-      background: #FFD54F;
-      border-radius: 50%;
-      box-shadow: 0 0 20px rgba(255, 213, 79, 0.5);
-      animation: sunPulse 3s ease-in-out infinite;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 50;
     }
-    .sun::before {
-      content: '';
+    .ripple {
       position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 60px;
-      height: 60px;
-      border: 2px solid rgba(255, 213, 79, 0.3);
       border-radius: 50%;
+      border: 2px solid rgba(79, 195, 247, 0.5);
+      background: radial-gradient(circle, rgba(79,195,247,0.15) 0%, transparent 70%);
+      animation: rippleExpand 0.8s ease-out forwards;
+      pointer-events: none;
+    }
+    @keyframes rippleExpand {
+      0% { width: 0; height: 0; opacity: 1; }
+      100% { width: 120px; height: 120px; opacity: 0; margin-left: -60px; margin-top: -60px; }
     }
 
-    /* 对话气泡 */
+    @keyframes float {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(-10px); }
+    }
+    @keyframes tailWag {
+      0%, 100% { transform: rotate(-12deg); }
+      50% { transform: rotate(12deg); }
+    }
+    @keyframes blink {
+      0%, 92%, 100% { transform: scaleY(1); }
+      96% { transform: scaleY(0.1); }
+    }
+
+    /* ===== 毛玻璃气泡 ===== */
     .bubble {
       position: absolute;
       top: 5px;
       left: 50%;
       transform: translateX(-50%) scale(0);
-      background: white;
-      padding: 8px 12px;
-      border-radius: 15px;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding: 10px 14px;
+      border-radius: 16px;
       font-size: 12px;
       color: #333;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.15);
-      max-width: 180px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.12), 0 0 0 1px rgba(255,255,255,0.5) inset;
+      max-width: 190px;
       text-align: center;
       opacity: 0;
-      transition: all 0.3s ease;
+      transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
       z-index: 100;
       pointer-events: auto;
       -webkit-app-region: no-drag;
+      border: 1px solid rgba(255,255,255,0.6);
     }
     .bubble.show {
       transform: translateX(-50%) scale(1);
@@ -212,96 +349,111 @@
     .bubble::after {
       content: '';
       position: absolute;
-      bottom: -6px;
+      bottom: -7px;
       left: 50%;
       transform: translateX(-50%);
-      border-left: 6px solid transparent;
-      border-right: 6px solid transparent;
-      border-top: 6px solid white;
+      border-left: 7px solid transparent;
+      border-right: 7px solid transparent;
+      border-top: 7px solid rgba(255,255,255,0.85);
     }
     .bubble .bubble-close {
       position: absolute;
-      top: -5px;
-      right: -5px;
-      width: 16px;
-      height: 16px;
-      background: #ff6b6b;
+      top: -6px;
+      right: -6px;
+      width: 18px;
+      height: 18px;
+      background: linear-gradient(135deg, #FF8A80 0%, #FF5252 100%);
       border-radius: 50%;
       color: white;
-      font-size: 10px;
-      line-height: 16px;
+      font-size: 11px;
+      line-height: 18px;
       cursor: pointer;
+      box-shadow: 0 2px 5px rgba(255,82,82,0.3);
       display: none;
+      transition: transform 0.2s;
     }
-    .bubble:hover .bubble-close {
-      display: block;
-    }
+    .bubble .bubble-close:hover { transform: scale(1.15); }
+    .bubble:hover .bubble-close { display: block; }
     .bubble .bubble-action {
-      margin-top: 6px;
-      padding: 4px 10px;
-      background: #4FC3F7;
+      margin-top: 8px;
+      padding: 5px 14px;
+      background: linear-gradient(135deg, #4FC3F7 0%, #29B6F6 100%);
       color: white;
       border: none;
-      border-radius: 10px;
-      font-size: 11px;
+      border-radius: 12px;
+      font-size: 12px;
       cursor: pointer;
       -webkit-app-region: no-drag;
+      box-shadow: 0 2px 8px rgba(41,182,246,0.3);
+      transition: all 0.2s;
     }
     .bubble .bubble-action:hover {
-      background: #29B6F6;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(41,182,246,0.4);
     }
 
-    /* 菜单 */
+    /* ===== 毛玻璃菜单 ===== */
     .menu {
       position: absolute;
-      bottom: 60px;
+      bottom: 70px;
       left: 50%;
       transform: translateX(-50%) scale(0);
-      background: white;
-      border-radius: 12px;
-      padding: 8px 0;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-radius: 16px;
+      padding: 10px 0;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.15), 0 0 0 1px rgba(255,255,255,0.6) inset;
       opacity: 0;
-      transition: all 0.2s ease;
+      transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
       z-index: 100;
-      min-width: 140px;
+      min-width: 150px;
       -webkit-app-region: no-drag;
+      border: 1px solid rgba(255,255,255,0.7);
+      overflow: hidden;
     }
     .menu.show {
       transform: translateX(-50%) scale(1);
       opacity: 1;
     }
     .menu-item {
-      padding: 8px 16px;
+      padding: 10px 18px;
       font-size: 13px;
       color: #333;
       cursor: pointer;
-      transition: background 0.2s;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
     .menu-item:hover {
-      background: #E3F2FD;
+      background: linear-gradient(90deg, rgba(79,195,247,0.15) 0%, rgba(79,195,247,0.05) 100%);
+      color: #0288D1;
     }
     .menu-divider {
       height: 1px;
-      background: #e0e0e0;
-      margin: 4px 0;
+      background: linear-gradient(90deg, transparent, rgba(0,0,0,0.08), transparent);
+      margin: 5px 10px;
     }
 
-    /* 设置面板 */
+    /* ===== 毛玻璃设置面板 ===== */
     .settings-panel {
       position: absolute;
-      bottom: 60px;
+      bottom: 70px;
       left: 50%;
       transform: translateX(-50%) scale(0);
-      background: white;
-      border-radius: 12px;
-      padding: 16px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-radius: 16px;
+      padding: 18px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.15), 0 0 0 1px rgba(255,255,255,0.6) inset;
       opacity: 0;
-      transition: all 0.2s ease;
+      transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
       z-index: 100;
-      width: 200px;
+      width: 210px;
       -webkit-app-region: no-drag;
+      border: 1px solid rgba(255,255,255,0.7);
     }
     .settings-panel.show {
       transform: translateX(-50%) scale(1);
@@ -309,108 +461,128 @@
     }
     .settings-panel h3 {
       font-size: 14px;
-      margin-bottom: 12px;
+      margin-bottom: 14px;
       color: #333;
+      font-weight: 600;
     }
     .setting-row {
-      margin-bottom: 12px;
+      margin-bottom: 14px;
     }
     .setting-row label {
       display: block;
       font-size: 12px;
-      color: #666;
-      margin-bottom: 4px;
+      color: #555;
+      margin-bottom: 5px;
     }
     .setting-row input[type="range"] {
       width: 100%;
+      height: 4px;
+      border-radius: 2px;
+      background: linear-gradient(90deg, #E3F2FD, #4FC3F7);
+      outline: none;
+      -webkit-appearance: none;
+    }
+    .setting-row input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #4FC3F7;
+      box-shadow: 0 2px 6px rgba(79,195,247,0.4);
+      cursor: pointer;
     }
     .setting-row .range-value {
       text-align: center;
       font-size: 12px;
       color: #4FC3F7;
+      font-weight: 600;
     }
     .setting-row input[type="checkbox"] {
       margin-right: 6px;
+      accent-color: #4FC3F7;
     }
     .settings-close {
-      margin-top: 8px;
+      margin-top: 10px;
       width: 100%;
-      padding: 6px;
-      background: #4FC3F7;
+      padding: 8px;
+      background: linear-gradient(135deg, #4FC3F7 0%, #29B6F6 100%);
       color: white;
       border: none;
-      border-radius: 8px;
+      border-radius: 10px;
       font-size: 12px;
       cursor: pointer;
+      box-shadow: 0 2px 8px rgba(41,182,246,0.3);
+      transition: all 0.2s;
+    }
+    .settings-close:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(41,182,246,0.4);
     }
 
-    @keyframes float {
-      0%, 100% { transform: translateX(-50%) translateY(0); }
-      50% { transform: translateX(-50%) translateY(-8px); }
-    }
-    @keyframes tailWag {
-      0%, 100% { transform: rotate(-10deg); }
-      50% { transform: rotate(10deg); }
-    }
-    @keyframes waveMove {
-      0% { transform: translateX(0); }
-      100% { transform: translateX(-30px); }
-    }
-    @keyframes sunPulse {
-      0%, 100% { transform: scale(1); opacity: 1; }
-      50% { transform: scale(1.1); opacity: 0.9; }
-    }
-    @keyframes blink {
-      0%, 90%, 100% { transform: scaleY(1); }
-      95% { transform: scaleY(0.1); }
-    }
-    .eye {
-      animation: blink 4s infinite;
-    }
-
-    /* 提醒动画 */
+    /* ===== 动画 ===== */
     @keyframes reminderShake {
       0%, 100% { transform: translateX(-50%) rotate(0); }
-      25% { transform: translateX(-50%) rotate(-5deg); }
-      75% { transform: translateX(-50%) rotate(5deg); }
+      25% { transform: translateX(-50%) rotate(-6deg); }
+      75% { transform: translateX(-50%) rotate(6deg); }
     }
     .reminding .dolphin-body {
-      animation: reminderShake 0.5s ease-in-out 3, float 2s ease-in-out infinite;
+      animation: reminderShake 0.5s ease-in-out 3, float 2.5s ease-in-out infinite;
     }
 
-    /* 点击表情 */
     @keyframes happy {
       0%, 100% { transform: translateX(-50%) scale(1); }
-      50% { transform: translateX(-50%) scale(1.1); }
+      50% { transform: translateX(-50%) scale(1.12); }
     }
     .happy .dolphin-body {
-      animation: happy 0.3s ease-in-out 2;
+      animation: happy 0.35s ease-in-out 2;
     }
   </style>
 </head>
 <body>
   <div class="pet-container" id="petContainer">
-    <div class="sun"></div>
+    <!-- 光斑粒子 -->
+    <div class="particles">
+      <div class="particle p1"></div>
+      <div class="particle p2"></div>
+      <div class="particle p3"></div>
+      <div class="particle p4"></div>
+      <div class="particle p5"></div>
+      <div class="particle p6"></div>
+    </div>
 
+    <!-- 太阳 -->
+    <div class="sun">
+      <div class="sun-ray"></div>
+      <div class="sun-ray"></div>
+      <div class="sun-ray"></div>
+      <div class="sun-ray"></div>
+    </div>
+
+    <!-- 水波纹容器 -->
+    <div class="ripple-container" id="rippleContainer"></div>
+
+    <!-- 气泡 -->
     <div class="bubble" id="bubble">
-      <span class="bubble-close" onclick="hideBubble()">×</span>
+      <span class="bubble-close" onclick="hideBubble()">&times;</span>
       <span id="bubbleText">你好！我是你的夏日宠物小蓝~</span>
       <br>
       <button class="bubble-action" id="bubbleAction" style="display:none" onclick="openLogWindow()">去记录</button>
     </div>
 
+    <!-- 菜单 -->
     <div class="menu" id="menu">
-      <div class="menu-item" onclick="openLogWindow()">📝 写日志</div>
-      <div class="menu-item" onclick="showLogs()">📋 查看日志</div>
+      <div class="menu-item" onclick="openLogWindow()">&#128221; 写日志</div>
+      <div class="menu-item" onclick="showLogs()">&#128203; 查看日志</div>
       <div class="menu-divider"></div>
-      <div class="menu-item" onclick="toggleSettings()">⚙️ 设置</div>
-      <div class="menu-item" onclick="hidePet()">🙈 隐藏</div>
+      <div class="menu-item" onclick="toggleSettings()">&#9881;&#65039; 设置</div>
+      <div class="menu-item" onclick="hidePet()">&#128586; 隐藏</div>
       <div class="menu-divider"></div>
-      <div class="menu-item" onclick="quitApp()">❌ 退出</div>
+      <div class="menu-item" onclick="quitApp()">&#10060; 退出</div>
     </div>
 
+    <!-- 设置面板 -->
     <div class="settings-panel" id="settingsPanel">
-      <h3>⚙️ 提醒设置</h3>
+      <h3>&#9881;&#65039; 提醒设置</h3>
       <div class="setting-row">
         <label>提醒间隔: <span class="range-value" id="intervalValue">60</span> 分钟</label>
         <input type="range" id="intervalRange" min="15" max="180" step="15" value="60">
@@ -424,9 +596,11 @@
       <button class="settings-close" onclick="saveSettings()">保存</button>
     </div>
 
+    <!-- 海豚 -->
     <div class="pet-body" id="petBody">
       <div class="dolphin-tail"></div>
       <div class="dolphin-body" id="dolphinBody">
+        <div class="dolphin-highlight"></div>
         <div class="eye left"></div>
         <div class="eye right"></div>
         <div class="mouth"></div>
@@ -435,7 +609,9 @@
       </div>
     </div>
 
+    <!-- 海浪 -->
     <div class="waves">
+      <div class="wave"></div>
       <div class="wave"></div>
       <div class="wave"></div>
     </div>
@@ -445,6 +621,7 @@
     const { ipcRenderer } = require('electron');
     const petContainer = document.getElementById('petContainer');
     const petBody = document.getElementById('petBody');
+    const rippleContainer = document.getElementById('rippleContainer');
     const bubble = document.getElementById('bubble');
     const bubbleText = document.getElementById('bubbleText');
     const bubbleAction = document.getElementById('bubbleAction');
@@ -456,17 +633,25 @@
 
     let bubbleTimer;
     let idleMessages = [
-      '今天天气真好~ 🌞',
-      '记得多喝水哦 💧',
-      '休息一下，看看远方吧 👀',
+      '今天天气真好~ &#127774;',
+      '记得多喝水哦 &#128167;',
+      '休息一下，看看远方吧 &#128064;',
       '你今天的心情怎么样？',
-      '夏天要注意防晒哦 ☀️',
-      '工作累了就歇歇吧 🏖️',
+      '夏天要注意防晒哦 &#9728;&#65039;',
+      '工作累了就歇歇吧 &#127958;&#65039;',
       '想写点什么吗？',
       '小蓝在陪着你呢~'
     ];
 
-    // 随机显示气泡
+    function createRipple(x, y) {
+      const ripple = document.createElement('div');
+      ripple.className = 'ripple';
+      ripple.style.left = x + 'px';
+      ripple.style.top = y + 'px';
+      rippleContainer.appendChild(ripple);
+      setTimeout(() => ripple.remove(), 900);
+    }
+
     function showRandomBubble() {
       if (bubble.classList.contains('show')) return;
       const msg = idleMessages[Math.floor(Math.random() * idleMessages.length)];
@@ -474,7 +659,7 @@
     }
 
     function showBubble(text, hasAction) {
-      bubbleText.textContent = text;
+      bubbleText.innerHTML = text;
       bubbleAction.style.display = hasAction ? 'inline-block' : 'none';
       bubble.classList.add('show');
       clearTimeout(bubbleTimer);
@@ -485,25 +670,19 @@
       bubble.classList.remove('show');
     }
 
-    // 初始欢迎
-    setTimeout(() => showBubble('你好！我是小蓝~ 点击我可以写日志哦 🌊', false), 1000);
+    setTimeout(() => showBubble('你好！我是小蓝~ 点击我可以写日志哦 &#127754;', false), 1200);
+    setInterval(showRandomBubble, 35000);
 
-    // 定时随机气泡
-    setInterval(showRandomBubble, 30000);
-
-    // 点击宠物
     petBody.addEventListener('click', (e) => {
       e.stopPropagation();
+      createRipple(e.offsetX, e.offsetY);
       hideBubble();
       menu.classList.toggle('show');
       settingsPanel.classList.remove('show');
-
-      // 开心动画
       petContainer.classList.add('happy');
-      setTimeout(() => petContainer.classList.remove('happy'), 600);
+      setTimeout(() => petContainer.classList.remove('happy'), 700);
     });
 
-    // 点击空白关闭菜单
     petContainer.addEventListener('click', (e) => {
       if (e.target === petContainer) {
         menu.classList.remove('show');
@@ -511,7 +690,6 @@
       }
     });
 
-    // 右键菜单
     petContainer.addEventListener('contextmenu', (e) => {
       e.preventDefault();
       menu.classList.toggle('show');
@@ -553,31 +731,27 @@
         enabled: reminderEnabled.checked
       });
       settingsPanel.classList.remove('show');
-      showBubble('设置已保存 ✓', false);
+      showBubble('设置已保存 &#10003;', false);
     }
 
-    // 接收提醒
     ipcRenderer.on('pet-reminder', (event, message) => {
       petContainer.classList.add('reminding');
-      setTimeout(() => petContainer.classList.remove('reminding'), 2000);
+      setTimeout(() => petContainer.classList.remove('reminding'), 2500);
       showBubble(message, true);
     });
 
-    // 接收动作指令
     ipcRenderer.on('pet-action', (event, action) => {
       if (action === 'write') {
-        showBubble('来记录今天的故事吧 📝', false);
+        showBubble('来记录今天的故事吧 &#128221;', false);
       }
     });
 
-    // 打开设置面板
     ipcRenderer.on('open-settings', () => {
       hideBubble();
       menu.classList.remove('show');
       settingsPanel.classList.add('show');
     });
 
-    // 加载设置
     async function loadSettings() {
       const settings = await ipcRenderer.invoke('get-settings');
       intervalRange.value = settings.reminderInterval || 60;
