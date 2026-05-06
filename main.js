@@ -90,8 +90,8 @@ function createPetWindow() {
   const y = settings.petPosition.y || screenH - 360;
 
   petWindow = new BrowserWindow({
-    width: 240,
-    height: 340,
+    width: 280,
+    height: 420,
     x,
     y,
     frame: false,
@@ -412,6 +412,12 @@ ipcMain.handle('quit', () => {
 
 ipcMain.handle('hide-pet', () => {
   petWindow?.hide();
+});
+
+ipcMain.handle('move-window', (event, dx, dy) => {
+  if (!petWindow) return;
+  const [x, y] = petWindow.getPosition();
+  petWindow.setPosition(Math.round(x + dx), Math.round(y + dy));
 });
 
 app.whenReady().then(() => {
